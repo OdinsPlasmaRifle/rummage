@@ -11,7 +11,7 @@ admin.autodiscover()
 
 schema_view = get_schema_view(
    openapi.Info(
-      title="Hike With Us",
+      title="MtG Card Crawler",
       default_version='v1',
       description=""
    ),
@@ -41,4 +41,6 @@ urlpatterns = [
     ),
 
     # API
+    re_path(r'^searches/?$', views.CreateSearchesView.as_view(), name='searches'),
+    re_path(r'^searches/(?P<id>\d+)/?$', views.SearchesView.as_view(), name='searches-view'),
 ]

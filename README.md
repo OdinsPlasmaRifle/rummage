@@ -1,4 +1,4 @@
-# Django Hike With Us
+# Django MtG Card Crawler
 
 ```
 pip install -r requirements.txt
