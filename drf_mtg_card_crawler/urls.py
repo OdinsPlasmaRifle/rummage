@@ -41,6 +41,6 @@ urlpatterns = [
     ),
 
     # API
-    re_path(r'^searches/?$', views.CreateSearchesView.as_view(), name='searches'),
-    re_path(r'^searches/(?P<id>\d+)/?$', views.SearchesView.as_view(), name='searches-view'),
+    re_path(r'^searches/?$', views.CreateSearchView.as_view(), name='searches'),
+    re_path(r'^searches/(?P<id>\d+)/?$', views.SearchView.as_view(), name='searches-view'),
 ]

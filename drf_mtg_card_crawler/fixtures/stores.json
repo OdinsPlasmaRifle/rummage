@@ -9,5 +9,49 @@
       "created": "2020-03-28T09:01:08.745Z",
       "updated": "2020-03-28T09:01:08.745Z"
     }
+  },
+  {
+    "model": "drf_mtg_card_crawler.store",
+    "pk": 2,
+    "fields": {
+      "name": "Dracoti",
+      "slug": "dracoti",
+      "website": "https://shop.dracoti.co.za",
+      "created": "2020-03-28T09:01:08.745Z",
+      "updated": "2020-03-28T09:01:08.745Z"
+    }
+  },
+  {
+    "model": "drf_mtg_card_crawler.store",
+    "pk": 3,
+    "fields": {
+      "name": "Top Deck",
+      "slug": "topdecksa",
+      "website": "https://store.topdecksa.co.za",
+      "created": "2020-03-28T09:01:08.745Z",
+      "updated": "2020-03-28T09:01:08.745Z"
+    }
+  },
+  {
+    "model": "drf_mtg_card_crawler.store",
+    "pk": 4,
+    "fields": {
+      "name": "Sad Robot",
+      "slug": "sadrobot",
+      "website": "https://www.sadrobot.co.za",
+      "created": "2020-03-28T09:01:08.745Z",
+      "updated": "2020-03-28T09:01:08.745Z"
+    }
+  },
+  {
+    "model": "drf_mtg_card_crawler.store",
+    "pk": 5,
+    "fields": {
+      "name": "HQ Gaming",
+      "slug": "hqgaming",
+      "website": "https://hqgaming.co.za",
+      "created": "2020-03-28T09:01:08.745Z",
+      "updated": "2020-03-28T09:01:08.745Z"
+    }
   }
 ]

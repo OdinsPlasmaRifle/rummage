@@ -28,43 +28,44 @@ class Store(DateModel):
 
 
 class SearchResult(DateModel):
+    term = models.ForeignKey(
+        'drf_mtg_card_crawler.SearchTerm',
+        related_name='results',
+        on_delete=models.CASCADE
+    )
+    store = models.ForeignKey(
+        'drf_mtg_card_crawler.Store', on_delete=models.CASCADE
+    )
+    url = models.CharField(max_length=250)
+    metadata = JSONField(null=True, default=dict)
+
+
+class SearchTerm(DateModel):
     search = models.ForeignKey(
         'drf_mtg_card_crawler.Search',
-        related_name='results',
-        null=True,
+        related_name='terms',
         on_delete=models.CASCADE
     )
     term = models.CharField(max_length=150)
-    stores = models.ManyToManyField('drf_mtg_card_crawler.Store')
 
 
 class Search(DateModel):
-    # Terms to search by.
-    terms = ArrayField(
-        models.CharField(max_length=150), size=500, null=True, blank=True
-    )
-    # Stores to include in the search.
     stores = models.ManyToManyField('drf_mtg_card_crawler.Store')
 
-    def save(self, *args, **kwargs):
-        created = True if not self.id else False
+    def process(self):
+        stores = self.stores if self.stores.all().exists() \
+            else Store.objects.all()
 
-        # Save the search details.
-        super().save(*args, **kwargs)
+        search_results = []
+        for term in self.terms.all():
+            for store in stores:
+                for result in store.search(term.term):
+                    search_results.append(
+                        SearchResult(
+                            term=term,
+                            store=store,
+                            **result
+                        )
+                    )
 
-        if created:
-            stores = self.stores if self.stores.all().exists() \
-                else Store.objects.all()
-
-            for term in self.terms:
-                search_result = SearchResult.objects.create(
-                    search=self,
-                    term=term
-                )
-
-                stores_found = []
-                for store in stores:
-                    if store.search(term):
-                        stores_found.append(store)
-
-                search_result.stores.set(stores_found)
+        SearchResult.objects.bulk_create(search_results)
