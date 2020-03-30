@@ -1,0 +1,13 @@
+[
+  {
+    "model": "drf_mtg_card_crawler.store",
+    "pk": 1,
+    "fields": {
+      "name": "Luckshack",
+      "slug": "luckshack",
+      "website": "https://luckshack.co.za",
+      "created": "2020-03-28T09:01:08.745Z",
+      "updated": "2020-03-28T09:01:08.745Z"
+    }
+  }
+]

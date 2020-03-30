@@ -1,9 +1,9 @@
 import os
 
 
-env_vars_loaded = os.environ.get('DEBUG', '')
+env_vars_loaded = os.environ.get('DEBUG', False)
 
-# fallback for when env variables are not loaded:
+# Fallback for when env variables are not loaded:
 if not env_vars_loaded:
     try:
         print('Loading keys from file...')
@@ -21,14 +21,4 @@ if not env_vars_loaded:
                 k, v = var.split('=', maxsplit=1)
                 os.environ.setdefault(k, v)
     except FileNotFoundError:
-        print('environmental variables file not found: {}'.format(file_path))
-
-    os.environ["POSTGRES_HOST"] = os.environ.get(
-        'LOCAL_POSTGRES_HOST', 'localhost'
-    )
-    os.environ["POSTGRES_PORT"] = os.environ.get(
-        'LOCAL_POSTGRES_REMOTE_PORT', '5432'
-    )
-
-DEBUG = os.environ.get('DEBUG', '') in ['True', True, 'true']
-SECRET_KEY = os.environ.get('DJANGO_SECRET', 'local')
+        print('Environmental variables file not found: {}'.format(file_path))

@@ -12,7 +12,8 @@ class StoreSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Store
-        fields = ('id', 'name', 'created', 'updated',)
+        fields = ('id', 'name', 'website',)
+        read_only_fields = ('id', 'name', 'website',)
 
 
 class SearchResultSerializer(serializers.ModelSerializer):
@@ -20,8 +21,8 @@ class SearchResultSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SearchResult
-        fields = ('term', 'stores', 'created', 'updated',)
-        read_only = ('term', 'stores', 'created', 'updated',)
+        fields = ('term', 'stores',)
+        read_only_fields = ('term', 'stores',)
 
 
 class SearchSerializer(serializers.ModelSerializer):
@@ -30,4 +31,4 @@ class SearchSerializer(serializers.ModelSerializer):
     class Meta:
         model = Search
         fields = ('id', 'terms', 'results', 'created', 'updated',)
-        read_only = ('id', 'results', 'created', 'updated',)
+        read_only_fields = ('id', 'results', 'created', 'updated',)
