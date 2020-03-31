@@ -41,6 +41,8 @@ urlpatterns = [
     ),
 
     # API
+    re_path(r'^stores/?$', views.ListStoreView.as_view(), name='stores'),
+    re_path(r'^stores/(?P<id>\w+)/?$', views.StoreView.as_view(), name='stores-view'),
     re_path(r'^searches/?$', views.CreateSearchView.as_view(), name='searches'),
     re_path(r'^searches/(?P<id>([a-zA-Z0-9\_\-]+))/?$', views.SearchView.as_view(), name='searches-view'),
 ]

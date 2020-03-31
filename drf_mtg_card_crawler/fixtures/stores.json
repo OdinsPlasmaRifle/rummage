@@ -53,5 +53,49 @@
       "created": "2020-03-28T09:01:08.745Z",
       "updated": "2020-03-28T09:01:08.745Z"
     }
+  },
+  {
+    "model": "drf_mtg_card_crawler.store",
+    "pk": 6,
+    "fields": {
+      "name": "The Warren",
+      "slug": "thewarren",
+      "website": "http://www.thewarren.co.za",
+      "created": "2020-03-28T09:01:08.745Z",
+      "updated": "2020-03-28T09:01:08.745Z"
+    }
+  },
+  {
+    "model": "drf_mtg_card_crawler.store",
+    "pk": 7,
+    "fields": {
+      "name": "A.I. Fest",
+      "slug": "aifest",
+      "website": "https://store.ai-fest.co.za",
+      "created": "2020-03-28T09:01:08.745Z",
+      "updated": "2020-03-28T09:01:08.745Z"
+    }
+  },
+  {
+    "model": "drf_mtg_card_crawler.store",
+    "pk": 8,
+    "fields": {
+      "name": "Battle Wizards",
+      "slug": "battlewizards",
+      "website": "http://www.battlewizards.co.za",
+      "created": "2020-03-28T09:01:08.745Z",
+      "updated": "2020-03-28T09:01:08.745Z"
+    }
+  },
+  {
+    "model": "drf_mtg_card_crawler.store",
+    "pk": 9,
+    "fields": {
+      "name": "Underworld Connections",
+      "slug": "underworldconnections",
+      "website": "https://underworldconnections.com",
+      "created": "2020-03-28T09:01:08.745Z",
+      "updated": "2020-03-28T09:01:08.745Z"
+    }
   }
 ]

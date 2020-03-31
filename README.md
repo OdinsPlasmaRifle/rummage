@@ -3,11 +3,14 @@
 MtG card searcher for South African online stores. The following stores are supported:
 
 - Luckshack
-- HQ Gaming
-- Sad Robot
-- Top Deck
 - Dracoti
-
+- Top Deck
+- Sad Robot
+- HQ Gaming
+- The Warren
+- A.I. Fest
+- Battle Wizards
+- Underworld Connections
 
 # Setup
 

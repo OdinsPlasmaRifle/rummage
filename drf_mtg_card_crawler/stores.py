@@ -128,7 +128,35 @@ def hqgaming(term):
             pass
         else:
             for r in res:
-                url = r.pop("url", None)
+                if r["available"] == True:
+                    url = r.pop("url", None)
+                    results.append({
+                        "url": url,
+                        "metadata": r
+                    })
+
+    return results
+
+
+def thewarren(term):
+    results = []
+    url = "http://www.thewarren.co.za/json/product_search?query={}".format(term)
+
+    headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:74.0) Gecko/20100101 Firefox/74.0'}
+    response = requests.get(url, headers=headers, timeout=5)
+
+    if response.status_code == 200:
+        try:
+            res = response.json()
+            first = res[0]
+        except (KeyError, ValueError) as exc:
+            logger.exception(exc)
+        except (IndexError):
+            pass
+        else:
+            for r in res:
+                slug = r.get("slug", "")
+                url = "http://www.thewarren.co.za/shop/card/{}".format(slug)
                 results.append({
                     "url": url,
                     "metadata": r
@@ -137,4 +165,33 @@ def hqgaming(term):
     return results
 
 
+def aifest(term):
+    results = []
+    url = "https://store.ai-fest.co.za/search?q={}&limit=10&timestamp=1585690156863&ajaxSearch=1&id_lang=1".format(term)
 
+    response = requests.get(url, timeout=5)
+    if response.status_code == 200:
+        try:
+            res = response.json()
+            first = res[0]
+        except (KeyError, ValueError) as exc:
+            logger.exception(exc)
+        except (IndexError):
+            pass
+        else:
+            for r in res:
+                url = r.pop("product_link", None)
+                results.append({
+                    "url": url,
+                    "metadata": r
+                })
+
+    return results
+
+
+def battlewizards(term):
+    return []
+
+
+def underworldconnections(term):
+    return []

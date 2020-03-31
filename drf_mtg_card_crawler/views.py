@@ -1,24 +1,45 @@
 from logging import getLogger
 
 from rest_framework import status
-from rest_framework.generics import CreateAPIView, RetrieveAPIView
+from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveAPIView
 from rest_framework.permissions import AllowAny
 from rest_framework import exceptions
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 
-from .serializers import SearchSerializer, CreateSearchSerializer
-from .models import Search
+from .serializers import (
+    StoreSerializer, SearchSerializer, CreateSearchSerializer
+)
+from .models import Store, Search
 
 
 logger = getLogger('django')
 
 
+class ListStoreView(ListAPIView):
+    permission_classes = (AllowAny, )
+    serializer_class = StoreSerializer
+    pagination_class = LimitOffsetPagination
+    page_size = 100
+
+    def get_queryset(self):
+        return Store.objects.all().order_by('slug')
+
+
+class StoreView(RetrieveAPIView):
+    permission_classes = (AllowAny, )
+    serializer_class = StoreSerializer
+
+    def get_object(self):
+        try:
+            return Store.objects.get(id=self.kwargs['id'])
+        except Store.DoesNotExist:
+            raise exceptions.NotFound()
+
+
 class CreateSearchView(CreateAPIView):
     permission_classes = (AllowAny, )
     serializer_class = SearchSerializer
-    pagination_class = LimitOffsetPagination
-    page_size = 100
 
     def get_serializer_class(self):
         if self.request.method == "POST":
