@@ -13,8 +13,8 @@ class StoreSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Store
-        fields = ('id', 'name', 'website',)
-        read_only_fields = ('id', 'name', 'website',)
+        fields = ('id', 'name', 'slug', 'website',)
+        read_only_fields = ('id', 'name', 'slug', 'website',)
 
 
 class SearchResultSerializer(serializers.ModelSerializer):
@@ -36,15 +36,22 @@ class SearchTermSerializer(serializers.ModelSerializer):
 
 
 class SearchSerializer(serializers.ModelSerializer):
+    id = serializers.CharField(read_only=True, source="identifier")
     terms = SearchTermSerializer(read_only=True, many=True)
 
     class Meta:
         model = Search
-        fields = ('id', 'terms', 'terms', 'created', 'updated',)
+        fields = ('id', 'terms', 'created', 'updated',)
         read_only_fields = ('id', 'terms', 'created', 'updated',)
 
 
 class CreateSearchSerializer(SearchSerializer):
+    stores = serializers.ListField(
+        child=serializers.CharField(),
+        required=False,
+        write_only=True,
+        max_length=100
+    )
     terms = serializers.ListField(
         child=serializers.CharField(),
         required=True,
@@ -53,10 +60,22 @@ class CreateSearchSerializer(SearchSerializer):
         max_length=100
     )
 
+    class Meta:
+        model = Search
+        fields = ('id', 'stores', 'terms', 'created', 'updated',)
+        read_only_fields = ('id', 'created', 'updated',)
+
+    def validate_stores(self, stores):
+        return Store.objects.filter(slug__in=stores)
+
     def create(self, validated_data):
         with transaction.atomic():
+            stores = validated_data.pop("stores")
             terms = validated_data.pop("terms", [])
             search = Search.objects.create(**validated_data)
+
+            if stores:
+                search.stores.set(stores)
 
             for term in terms:
                 SearchTerm.objects.create(search=search, term=term)

@@ -1,3 +1,4 @@
+import uuid
 from logging import getLogger
 
 from django.db import models
@@ -20,7 +21,7 @@ class DateModel(models.Model):
 
 class Store(DateModel):
     name = models.CharField(max_length=250)
-    slug = models.CharField(max_length=250)
+    slug = models.CharField(max_length=250, unique=True, db_index=True)
     website = models.CharField(max_length=250)
 
     def search(self, term):
@@ -46,14 +47,19 @@ class SearchTerm(DateModel):
         related_name='terms',
         on_delete=models.CASCADE
     )
-    term = models.CharField(max_length=150)
+    term = models.CharField(max_length=150, db_index=True)
 
 
 class Search(DateModel):
+    identifier = models.UUIDField(
+        unique=True,
+        db_index=True,
+        default=uuid.uuid4
+    )
     stores = models.ManyToManyField('drf_mtg_card_crawler.Store')
 
     def process(self):
-        stores = self.stores if self.stores.all().exists() \
+        stores = self.stores.all() if self.stores.all().exists() \
             else Store.objects.all()
 
         search_results = []

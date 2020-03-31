@@ -45,6 +45,6 @@ class SearchView(RetrieveAPIView):
 
     def get_object(self):
         try:
-            return Search.objects.get(id=self.kwargs['id'])
+            return Search.objects.get(identifier=self.kwargs['id'])
         except Search.DoesNotExist:
             raise exceptions.NotFound()
