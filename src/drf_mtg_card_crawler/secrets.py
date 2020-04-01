@@ -10,8 +10,8 @@ if not env_vars_loaded:
         current_directory = os.path.dirname(
             os.path.dirname(os.path.abspath(__file__))
         )
-        file_path = os.path.join(current_directory, '.env')
-        print(file_path)
+        parent_directory = os.path.split(current_directory)[0]
+        file_path = os.path.join(parent_directory, '.env')
         with open(file_path, 'r') as f:
             output = f.read()
             output = output.split('\n')

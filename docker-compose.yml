@@ -1,16 +1,54 @@
-version: "2.1"
+version: "3"
 
 services:
-  webapp:
-    extends:
-      service: webapp
-      file: ./docker-services.yml
-    command: /bin/sh -c "gunicorn config.wsgi:application --config file:config/gunicorn.py"
+  nginx:
+    image: nginx:latest
     ports:
-      - 8010:8000
+      - "8000:8000"
+    restart: always
+    volumes:
+      - ./etc/nginx:/etc/nginx/conf.d
     networks:
       - main
     depends_on:
+      - web
+
+  web:
+    build: .
+    user: nobody
+    env_file: $PWD/.env
+    restart: always
+    command: /bin/sh -c "gunicorn drf_mtg_card_crawler.wsgi:application --config file:drf_mtg_card_crawler/gunicorn.py"
+    expose:
+      - "8000"
+    networks:
+      - main
+    depends_on:
+      - rabbitmq
+      - postgres
+
+  worker_general:
+    build: .
+    user: nobody
+    env_file: $PWD/.env
+    restart: always
+    command: /bin/sh -c "celery -A drf_mtg_card_crawler.celery worker --loglevel=INFO --concurrency=1 -Q general-${CELERY_ID}"
+    networks:
+      - main
+    depends_on:
+      - rabbitmq
+      - postgres
+
+  scheduler:
+    build: .
+    user: nobody
+    env_file: $PWD/.env
+    restart: always
+    command: /bin/sh -c "celery -A drf_mtg_card_crawler.celery worker --beat --loglevel=INFO --pidfile= --concurrency=1 -Q dummy-queue-${CELERY_ID}"
+    networks:
+      - main
+    depends_on:
+      - rabbitmq
       - postgres
 
   postgres:
@@ -25,9 +63,19 @@ services:
         aliases:
           - postgres
 
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    restart: always
+    networks:
+      main:
+        aliases:
+          - rabbitmq
+
 volumes:
     pgdata:
-    newdata:
 
 networks:
     main:
