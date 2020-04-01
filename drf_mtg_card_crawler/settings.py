@@ -197,6 +197,14 @@ CELERY_BROKER_URL = 'amqp://{user}:{password}@{hostname}/{vhost}'.format(
 
 CELERY_IGNORE_RESULT = True
 
+CELERY_BEAT_SCHEDULE = {
+    'daily_report': {
+        'task': 'drf_mtg_card_crawler.tasks.clear_searches',
+        'schedule': crontab(hour=1),
+        'args': ()
+    },
+}
+
 
 # Logging
 # ----------------------------------------------------------------------------------------------------------------------
