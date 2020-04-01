@@ -131,6 +131,12 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
     ),
+    'DEFAULT_THROTTLE_CLASSES': (
+        'rest_framework.throttling.AnonRateThrottle',
+    ),
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '60/minute'
+    },
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 15
 }
@@ -164,6 +170,32 @@ REDOC_SETTINGS = {
 VERSION = '1.0.0'
 
 SITE_ID = 1
+
+
+# Celery
+# ---------------------------------------------------------------------------------------------------------------------
+
+if os.environ.get('SKIP_TASK_QUEUE') in ['True', 'true', True]:
+    CELERY_TASK_ALWAYS_EAGER = True
+    CELERY_TASK_EAGER_PROPAGATES = True
+
+CELERY_TASK_SERIALIZER = 'msgpack'
+CELERY_ACCEPT_CONTENT = ['msgpack']
+
+project_id = os.environ.get('CELERY_ID', 'local')
+CELERY_TASK_DEFAULT_QUEUE = '-'.join(('general', project_id))
+
+RABBITMQ_HOST = os.environ.get('RABBITMQ_HOST', 'rabbitmq')
+RABBITMQ_PORT = os.environ.get('RABBITMQ_PORT', '5672')
+
+CELERY_BROKER_URL = 'amqp://{user}:{password}@{hostname}/{vhost}'.format(
+    user=os.environ.get('RABBITMQ_USER', 'guest'),
+    password=os.environ.get('RABBITMQ_PASSWORD', 'guest'),
+    hostname="%s:%s" % (RABBITMQ_HOST, RABBITMQ_PORT),
+    vhost=os.environ.get('RABBITMQ_ENV_RABBITMQ_DEFAULT_VHOST', '/')
+)
+
+CELERY_IGNORE_RESULT = True
 
 
 # Logging

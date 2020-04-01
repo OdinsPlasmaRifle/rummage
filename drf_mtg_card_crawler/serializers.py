@@ -37,15 +37,19 @@ class SearchTermSerializer(serializers.ModelSerializer):
 
 class SearchSerializer(serializers.ModelSerializer):
     id = serializers.CharField(read_only=True, source="identifier")
+    status = serializers.CharField(source="status.value", read_only=True)
     terms = SearchTermSerializer(read_only=True, many=True)
 
     class Meta:
         model = Search
-        fields = ('id', 'terms', 'created', 'updated',)
-        read_only_fields = ('id', 'terms', 'created', 'updated',)
+        fields = ('id', 'status', 'retries', 'terms', 'created', 'updated',)
+        read_only_fields = (
+            'id', 'status', 'retries', 'terms', 'created', 'updated',
+        )
 
 
 class CreateSearchSerializer(SearchSerializer):
+    status = serializers.CharField(source="status.value", read_only=True)
     stores = serializers.ListField(
         child=serializers.CharField(),
         required=False,
@@ -62,8 +66,10 @@ class CreateSearchSerializer(SearchSerializer):
 
     class Meta:
         model = Search
-        fields = ('id', 'stores', 'terms', 'created', 'updated',)
-        read_only_fields = ('id', 'created', 'updated',)
+        fields = (
+            'id', 'status', 'retries', 'stores', 'terms', 'created', 'updated',
+        )
+        read_only_fields = ('id', 'status', 'retries', 'created', 'updated',)
 
     def validate_stores(self, stores):
         return Store.objects.filter(slug__in=stores)
@@ -80,5 +86,5 @@ class CreateSearchSerializer(SearchSerializer):
             for term in terms:
                 SearchTerm.objects.create(search=search, term=term)
 
-        search.process()
+        search.process_async()
         return search
