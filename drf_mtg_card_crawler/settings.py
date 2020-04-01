@@ -1,5 +1,6 @@
 import os
 
+from celery.schedules import crontab
 from .secrets import *
 
 
