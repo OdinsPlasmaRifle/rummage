@@ -1,6 +1,8 @@
 import requests
 from logging import getLogger
 
+from bs4 import BeautifulSoup
+
 
 logger = getLogger('django')
 
@@ -190,8 +192,56 @@ def aifest(term):
 
 
 def battlewizards(term):
-    return []
+    results = []
+    url = "http://www.battlewizards.co.za/search.php?search_query={}&section=product".format(term)
+
+    response = requests.get(url, timeout=5)
+    if response.status_code == 200:
+        soup = BeautifulSoup(response.content, 'html.parser')
+        products = soup.findAll("li", class_="product")
+
+        for product in products:
+            image = product.article.figure.a.div.img
+            title_box = product.findAll("h4", class_="card-title")
+            price_box = product.findAll("span", class_="price--withTax")
+
+            data = {
+                "url": title_box[0].a.get("href"),
+                "metadata": {
+                    "title": title_box[0].a.string,
+                    "image": image.get("data-src"),
+                    "price": price_box[0].string
+                }
+            }
+            results.append(data)
+
+    return results
 
 
 def underworldconnections(term):
-    return []
+    results = []
+    url = "https://underworldconnections.com/?s={}&shop_load=search&post_type=product&shop_filters_layout=header".format(term)
+
+    response = requests.get(url, timeout=5)
+    if response.status_code == 200:
+        soup = BeautifulSoup(response.content, 'html.parser')
+        products = soup.findAll("li", class_="product")
+
+        for product in products:
+            image = product.div.a.img
+            title_box = product.findAll("h3")
+            price_box = product.findAll(
+                "span", class_="woocommerce-Price-amount"
+            )
+
+            data = {
+                "url": title_box[0].a.get("href"),
+                "metadata": {
+                    "title": title_box[0].a.string,
+                    "image": image.get("data-src"),
+                    "price": price_box[0].find(text=True, recursive=False)
+                }
+            }
+            results.append(data)
+
+    return results

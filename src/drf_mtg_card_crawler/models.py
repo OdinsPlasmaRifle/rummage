@@ -33,7 +33,9 @@ class Store(DateModel):
     website = models.CharField(max_length=250)
 
     def search(self, term):
-        return getattr(drf_mtg_card_crawler.stores, self.slug)(term)
+        results = getattr(drf_mtg_card_crawler.stores, self.slug)(term)
+        results.reverse()
+        return results
 
 
 class SearchResult(DateModel):
@@ -49,7 +51,7 @@ class SearchResult(DateModel):
     metadata = JSONField(null=True, default=dict)
     cachable = models.BooleanField(default=True)
 
-    MAX_CACHE_AGE = 600
+    MAX_CACHE_AGE = 1
 
 
 class SearchTerm(DateModel):
@@ -87,6 +89,9 @@ class Search(DateModel):
         """
         Get any search results that could be used as a cache source.
         """
+
+        # TODO : Create distinct checks for this to prevent duplicates
+        # ensur that only the newest set of results can be returned.
 
         return SearchResult.objects.filter(
             term__term=term.term,
@@ -153,12 +158,12 @@ class Search(DateModel):
                     else:
                         def _parallel_search(store, term):
                             p_results = []
-                            for result in store.search(term.term):
+                            for s_result in store.search(term.term):
                                 p_results.append(
                                     SearchResult(
                                         term=term,
                                         store=store,
-                                        **result
+                                        **s_result
                                     )
                                 )
                             return p_results
