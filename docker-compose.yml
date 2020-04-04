@@ -55,7 +55,7 @@ services:
   postgres:
     image: postgres:9.6
     ports:
-      - '${POSTGRES_PORT}:5432'
+      - '${LOCAL_POSTGRES_PORT}:5432'
     restart: always
     volumes:
       - pgdata:/var/lib/postgresql/data
