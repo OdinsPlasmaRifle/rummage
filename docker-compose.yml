@@ -54,11 +54,16 @@ services:
 
   postgres:
     image: postgres:9.6
+    environment:
+      POSTGRES_DB: '${POSTGRES_DB}'
+      POSTGRES_USER: '${POSTGRES_USER}'
+      POSTGRES_PASSWORD: '${POSTGRES_PASSWORD}'
     ports:
       - '${LOCAL_POSTGRES_PORT}:5432'
     restart: always
     volumes:
       - pgdata:/var/lib/postgresql/data
+
     networks:
       main:
         aliases:
