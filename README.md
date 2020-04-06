@@ -12,6 +12,7 @@ MtG card searcher for South African online stores. The following stores are supp
 - Battle Wizards
 - Underworld Connections
 
+
 # Setup
 
 ```
@@ -34,3 +35,16 @@ python manage.py migrate
 python manage.py runserver 8080
 ```
 
+# Production
+
+```shell
+docker exec drf-mtg-card-crawler_web_1 /bin/sh -c "python manage.py migrate"
+```
+
+```shell
+docker exec drf-mtg-card-crawler_web_1 /bin/sh -c "python manage.py loaddata stores.json"
+```
+
+```shell
+docker exec drf-mtg-card-crawler_web_1 /bin/sh -c "python manage.py collectstatic --noinput"
+```
