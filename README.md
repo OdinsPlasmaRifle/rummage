@@ -46,5 +46,5 @@ docker exec drf-mtg-card-crawler_web_1 /bin/sh -c "python manage.py loaddata sto
 ```
 
 ```shell
-docker exec drf-mtg-card-crawler_web_1 /bin/sh -c "python manage.py collectstatic --noinput"
+docker exec --user root drf-mtg-card-crawler_web_1 /bin/sh -c "python manage.py collectstatic --no-input"
 ```
