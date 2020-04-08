@@ -8,7 +8,7 @@ services:
     restart: always
     volumes:
       - ./etc/nginx:/etc/nginx/conf.d
-      - ./var/www/static:/static
+      - ./var/www/static:/static:rw
     networks:
       - main
     depends_on:
@@ -16,7 +16,6 @@ services:
 
   web:
     build: .
-    user: nobody
     env_file: $PWD/.env
     restart: always
     command: /bin/sh -c "gunicorn drf_mtg_card_crawler.wsgi:application --config file:drf_mtg_card_crawler/gunicorn.py"
@@ -30,7 +29,6 @@ services:
 
   worker_general:
     build: .
-    user: nobody
     env_file: $PWD/.env
     restart: always
     command: /bin/sh -c "celery -A drf_mtg_card_crawler.celery worker --loglevel=INFO --concurrency=1 -Q general-${CELERY_ID}"
@@ -42,7 +40,6 @@ services:
 
   scheduler:
     build: .
-    user: nobody
     env_file: $PWD/.env
     restart: always
     command: /bin/sh -c "celery -A drf_mtg_card_crawler.celery worker --beat --loglevel=INFO --pidfile= --concurrency=1 -Q dummy-queue-${CELERY_ID}"
