@@ -33,9 +33,9 @@ class Store(DateModel):
     website = models.CharField(max_length=250)
 
     def search(self, term):
-        results = getattr(drf_mtg_card_crawler.stores, self.slug)(term)
-        results.reverse()
-        return results
+        return getattr(drf_mtg_card_crawler.stores, self.slug)(term)
+        # results.reverse()
+        # return results
 
 
 class SearchResult(DateModel):
@@ -49,9 +49,14 @@ class SearchResult(DateModel):
     )
     url = models.CharField(max_length=250)
     metadata = JSONField(null=True, default=dict)
-    cachable = models.BooleanField(default=True)
+    expires = models.DateTimeField()
+    # Override created to support manually setting the field.
+    created = models.DateTimeField(default=now, db_index=True)
 
-    MAX_CACHE_AGE = 1
+    MAX_CACHE_AGE = 600
+
+    class Meta:
+        ordering = ['created']
 
 
 class SearchTerm(DateModel):
@@ -61,6 +66,9 @@ class SearchTerm(DateModel):
         on_delete=models.CASCADE
     )
     term = models.CharField(max_length=150, db_index=True)
+
+    class Meta:
+        ordering = ['created']
 
 
 class Search(DateModel):
@@ -85,22 +93,19 @@ class Search(DateModel):
        return self.stores.all() if self.stores.all().exists() \
             else Store.objects.all()
 
-    def get_cachable_results(self, term, store):
+    def get_cachable_results(self, term, store, nocache=False):
         """
         Get any search results that could be used as a cache source.
         """
 
-        # TODO : Create distinct checks for this to prevent duplicates
-        # ensur that only the newest set of results can be returned.
+        if nocache:
+            return SearchResult.objects.none()
 
         return SearchResult.objects.filter(
             term__term=term.term,
             store=store,
-            cachable=True,
-            created__gt=now() - timedelta(
-                seconds=SearchResult.MAX_CACHE_AGE
-            )
-        )
+            expires__gt=now(),
+        ).distinct("url").order_by("url", "created")
 
     def process_async(self):
         tasks.process_search.delay(self.id)
@@ -133,6 +138,12 @@ class Search(DateModel):
             # Get stores.
             stores = self.get_stores()
 
+            # Get expiry dates.
+            cache_expires = now() + timedelta(
+                seconds=SearchResult.MAX_CACHE_AGE
+            )
+            no_cache_expires = now()
+
             search_results = []
             for term in self.terms.all():
                 # Define pools for parallelism.
@@ -152,24 +163,28 @@ class Search(DateModel):
                                     store=store,
                                     url=cachable_result.url,
                                     metadata=cachable_result.metadata,
-                                    cachable=False
+                                    expires=no_cache_expires,
+                                    created=cachable_result.created
                                 )
                             )
                     else:
-                        def _parallel_search(store, term):
+                        def _parallel_search(store, term, expires):
                             p_results = []
                             for s_result in store.search(term.term):
                                 p_results.append(
                                     SearchResult(
                                         term=term,
                                         store=store,
+                                        expires=expires,
                                         **s_result
                                     )
                                 )
                             return p_results
 
                         term_futures.append(
-                            term_pool.submit(_parallel_search, store, term)
+                            term_pool.submit(
+                                _parallel_search, store, term, cache_expires
+                            )
                         )
 
                 for x in as_completed(term_futures):
