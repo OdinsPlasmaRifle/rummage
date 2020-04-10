@@ -12,7 +12,7 @@ MtG card searcher for South African online stores. The following stores are supp
 - Battle Wizards
 - Underworld Connections
 
-# Development
+## Development
 
 Setup a Python virtual environment first. Then run the following commands from within that environment.
 
@@ -56,7 +56,7 @@ python manage.py runserver
 
 The django server will be served on: http://localhost:8000
 
-# Production
+## Production
 
 This project can be run in production using docker.
 
