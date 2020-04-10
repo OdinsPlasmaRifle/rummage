@@ -9,7 +9,6 @@ DEBUG = os.environ.get('DEBUG', False)
 SECRET_KEY = os.environ.get('DJANGO_SECRET', '')
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-PROJECT_DIR = os.path.abspath(os.path.join(BASE_DIR, '..'))
 
 ALLOWED_HOSTS = ['*']
 
@@ -116,11 +115,11 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-STATIC_ROOT = os.path.join(PROJECT_DIR, 'var/www/static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'var/www/static')
 
 MEDIA_URL = '/media/'
 
-MEDIA_ROOT = os.path.join(PROJECT_DIR, 'var/www/media')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'var/www/media')
 
 
 # REST FRAMEWORK ~ http://www.django-rest-framework.org/
