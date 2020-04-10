@@ -62,7 +62,7 @@ This project can be run in production using docker.
 
 Ensure that you run docker as a non-root user who is part of the `docker` group.
 
-Also, update the `.env` file to have values appropriate for production usgae.
+Also, update the `.env` file to have values appropriate for production usage.
 
 To run the docker containers, enter the following commands:
 
