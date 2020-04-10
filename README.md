@@ -15,6 +15,8 @@ MtG card searcher for South African online stores. The following stores are supp
 
 # Setup
 
+Ensure that you run docker as a non root user who is part of the `docker` group.
+
 ```
 pip install -r requirements.txt
 ```

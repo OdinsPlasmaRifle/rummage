@@ -8,7 +8,7 @@ services:
     restart: always
     volumes:
       - ./etc/nginx:/etc/nginx/conf.d
-      - ./var/www/static:/static:rw
+      - static_volume:/app/var/www/static:rw
     networks:
       - main
     depends_on:
@@ -21,6 +21,8 @@ services:
     command: /bin/sh -c "gunicorn drf_mtg_card_crawler.wsgi:application --config file:drf_mtg_card_crawler/gunicorn.py"
     expose:
       - "8000"
+    volumes:
+      - static_volume:/app/var/www/static:rw
     networks:
       - main
     depends_on:
@@ -59,8 +61,7 @@ services:
       - '${LOCAL_POSTGRES_PORT}:5432'
     restart: always
     volumes:
-      - pgdata:/var/lib/postgresql/data
-
+      - postgres_volume:/var/lib/postgresql/data
     networks:
       main:
         aliases:
@@ -78,7 +79,8 @@ services:
           - rabbitmq
 
 volumes:
-    pgdata:
+    postgres_volume:
+    static_volume:
 
 networks:
     main:
