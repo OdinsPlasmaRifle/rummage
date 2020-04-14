@@ -60,6 +60,7 @@ class CreateSearchView(CreateAPIView):
             headers=headers
         )
 
+
 class SearchView(RetrieveAPIView):
     permission_classes = (AllowAny, )
     serializer_class = SearchSerializer
