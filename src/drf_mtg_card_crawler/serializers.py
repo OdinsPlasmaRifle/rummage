@@ -76,7 +76,7 @@ class CreateSearchSerializer(SearchSerializer):
 
     def create(self, validated_data):
         with transaction.atomic():
-            stores = validated_data.pop("stores")
+            stores = validated_data.pop("stores", None)
             terms = validated_data.pop("terms", [])
             search = Search.objects.create(**validated_data)
 

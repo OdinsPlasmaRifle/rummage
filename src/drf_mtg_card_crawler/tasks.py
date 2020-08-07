@@ -40,7 +40,9 @@ def process_search(self, search_id):
     """
 
     from drf_mtg_card_crawler.models import Search
-    from drf_mtg_card_crawler.exceptions import SearchFatalError
+    from drf_mtg_card_crawler.exceptions import (
+        SearchFatalError, SearchMaxRetriesExceededError
+    )
 
     try:
         search = Search.objects.get(id=search_id)
@@ -53,4 +55,10 @@ def process_search(self, search_id):
     except SearchFatalError as exc:
         logger.exception(exc)
     except Exception:
-        self.retry(max_retries=Search.MAX_RETRIES)
+        try:
+            self.retry(
+                max_retries=Search.MAX_RETRIES,
+                exc=SearchMaxRetriesExceededError
+            )
+        except SearchMaxRetriesExceededError:
+            logger.exception("Search exceeded max retries.")

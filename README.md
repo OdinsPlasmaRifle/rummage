@@ -33,25 +33,25 @@ docker-compose up -d postgres
 Run the migrations on the new database:
 
 ```shell
-python manage.py migrate
+python ./src/manage.py migrate
 ```
 
 Load the store fixtures:
 
 ```shell
-python manage.py loaddata stores.json
+python ./src/manage.py loaddata stores.json
 ```
 
 Collect the static files:
 
 ```shell
-python manage.py collectstatic
+python ./src/manage.py collectstatic
 ```
 
 Finally, run the django server for testing:
 
 ```shell
-python manage.py runserver
+python ./src/manage.py runserver
 ```
 
 The django server will be served on: http://localhost:8000

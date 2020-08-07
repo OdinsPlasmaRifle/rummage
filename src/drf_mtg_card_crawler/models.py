@@ -5,6 +5,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from django.db import models
 from django.utils.timezone import now
+from django.db.models.expressions import Func, Expression, F
 from django.contrib.postgres.fields import JSONField, ArrayField
 from enumfields import EnumField
 
@@ -17,6 +18,27 @@ import drf_mtg_card_crawler.stores
 
 
 logger = getLogger('django')
+
+
+class BaseFunc(Func):
+    """
+    Base function class for basic database func() expressions.
+    """
+
+    def __init__(self, field, *values, **extra):
+        if not isinstance(field, Expression):
+            field = F(field)
+            if values and not isinstance(values[0], Expression):
+                values = [Value(v) for v in values]
+        super().__init__(field, *values, **extra)
+
+
+class ArrayAppend(BaseFunc):
+    """
+    Expression for the postgres array append function.
+    """
+
+    function = 'array_append'
 
 
 class DateModel(models.Model):
@@ -79,6 +101,9 @@ class Search(DateModel):
     )
     stores = models.ManyToManyField('drf_mtg_card_crawler.Store')
     retries = models.IntegerField(default=0)
+    exceptions = ArrayField(
+        models.CharField(max_length=300), null=True, blank=True, default=list
+    )
     status = EnumField(
         SearchStatus,
         max_length=50,
@@ -196,15 +221,18 @@ class Search(DateModel):
         except Exception as exc:
             # Handle retries.
             retries = self.retries + 1
+            self.exceptions = ArrayAppend(
+                'exceptions', truncate(str(exc), 297, suffix='...')
+            )
             if retries > self.MAX_RETRIES:
                 exc = SearchMaxRetriesExceededError()
                 self.status = SearchStatus.FAILED
-                self.save(update_fields=["status", "updated",])
+                self.save(update_fields=["exceptions", "status", "updated",])
                 raise exc
 
             self.retries = retries
             self.status = SearchStatus.QUEUED
-            self.save(update_fields=["status", "updated",])
+            self.save(update_fields=["exceptions", "status", "updated",])
             raise exc
 
         else:
