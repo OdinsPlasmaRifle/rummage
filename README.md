@@ -67,7 +67,7 @@ Also, update the `.env` file to have values appropriate for production usage.
 To run the docker containers, enter the following commands:
 
 ```shell
-docker-compose up -d
+docker-compose up -d --no-deps --build
 ```
 
 This will spin up all the docker containers required.
