@@ -55,10 +55,4 @@ def process_search(self, search_id):
     except SearchFatalError as exc:
         logger.exception(exc)
     except Exception:
-        try:
-            self.retry(
-                max_retries=Search.MAX_RETRIES,
-                exc=SearchMaxRetriesExceededError
-            )
-        except SearchMaxRetriesExceededError:
-            logger.exception("Search exceeded max retries.")
+        self.retry(max_retries=Search.MAX_RETRIES)

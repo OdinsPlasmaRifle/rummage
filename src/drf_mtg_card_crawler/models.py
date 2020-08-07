@@ -5,6 +5,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from django.db import models
 from django.utils.timezone import now
+from django.db.models import Value
 from django.db.models.expressions import Func, Expression, F
 from django.contrib.postgres.fields import JSONField, ArrayField
 from enumfields import EnumField
