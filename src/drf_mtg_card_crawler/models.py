@@ -15,6 +15,7 @@ from drf_mtg_card_crawler.exceptions import (
 )
 import drf_mtg_card_crawler.tasks as tasks
 import drf_mtg_card_crawler.stores
+import drf_mtg_card_crawler.common as common
 
 
 logger = getLogger('django')
@@ -56,8 +57,6 @@ class Store(DateModel):
 
     def search(self, term):
         return getattr(drf_mtg_card_crawler.stores, self.slug)(term)
-        # results.reverse()
-        # return results
 
 
 class SearchResult(DateModel):
@@ -222,7 +221,7 @@ class Search(DateModel):
             # Handle retries.
             retries = self.retries + 1
             self.exceptions = ArrayAppend(
-                'exceptions', truncate(str(exc), 297, suffix='...')
+                'exceptions', common.truncate(str(exc), 297, suffix='...')
             )
             if retries > self.MAX_RETRIES:
                 exc = SearchMaxRetriesExceededError()
