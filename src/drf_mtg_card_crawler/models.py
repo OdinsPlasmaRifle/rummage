@@ -219,8 +219,9 @@ class Search(DateModel):
             SearchResult.objects.bulk_create(search_results)
 
         except Exception as exc:
-            # Handle retries.
+            # Increment the retries.
             retries = self.retries + 1
+            # Log exceptions.
             self.exceptions = ArrayAppend(
                 'exceptions', common.truncate(str(exc), 297, suffix='...')
             )
@@ -232,7 +233,9 @@ class Search(DateModel):
 
             self.retries = retries
             self.status = SearchStatus.QUEUED
-            self.save(update_fields=["exceptions", "status", "updated",])
+            self.save(
+                update_fields=["retries", "exceptions", "status", "updated",]
+            )
             raise exc
 
         else:
