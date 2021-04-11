@@ -76,7 +76,7 @@ class SearchResult(DateModel):
     # Override created to support manually setting the field.
     created = models.DateTimeField(default=now, db_index=True)
 
-    MAX_CACHE_AGE = 0
+    MAX_CACHE_AGE = 600
 
     class Meta:
         ordering = ['created']
@@ -96,7 +96,7 @@ class SearchError(DateModel):
     # Override created to support manually setting the field.
     created = models.DateTimeField(default=now, db_index=True)
 
-    MAX_CACHE_AGE = 0
+    MAX_CACHE_AGE = 600
 
     class Meta:
         ordering = ['created']
