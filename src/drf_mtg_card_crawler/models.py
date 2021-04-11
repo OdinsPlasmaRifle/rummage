@@ -135,10 +135,6 @@ class Search(DateModel):
     # Max number of retries allowed.
     MAX_RETRIES = 0
 
-    def get_stores(self):
-       return self.stores.all() if self.stores.all().exists() \
-            else Store.objects.all()
-
     def get_cachable_results(self, term, store, nocache=False):
         """
         Get any search results that could be used as a cache source.
@@ -196,7 +192,7 @@ class Search(DateModel):
             self.save(update_fields=["status", "updated",])
 
             # Get stores.
-            stores = self.get_stores()
+            stores = self.stores.all()
 
             # Get expiry dates.
             cache_expires = now() + timedelta(
