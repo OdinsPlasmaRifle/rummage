@@ -23,7 +23,7 @@ class ListStoreView(ListAPIView):
     page_size = 100
 
     def get_queryset(self):
-        return Store.objects.all().order_by('slug')
+        return Store.objects.filter(enabled=True).order_by('slug')
 
 
 class StoreView(RetrieveAPIView):
@@ -32,7 +32,7 @@ class StoreView(RetrieveAPIView):
 
     def get_object(self):
         try:
-            return Store.objects.get(id=self.kwargs['id'])
+            return Store.objects.get(id=self.kwargs['id'], enabled=True)
         except Store.DoesNotExist:
             raise exceptions.NotFound()
 

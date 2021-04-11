@@ -1,6 +1,6 @@
 # Django MtG Card Crawler
 
-MtG card searcher for South African online stores. The following stores are supported:
+Product searcher for South African MTG stores. The following stores are supported:
 
 - Luckshack
 - Dracoti
@@ -13,7 +13,20 @@ MtG card searcher for South African online stores. The following stores are supp
 
 Previously supported:
 
-- HQ Gaming - No longer operating.
+- HQ Gaming - The store is no longer operating.
+
+
+## Issues
+
+The following stores need to be updated to handle "no stock" better. Currently they retrieve items that are out of stock:
+
+- The Warren
+- Sad Robot
+
+The following stores have very "vague" matching when finding results:
+
+- Battle Wizards
+
 
 ## Development
 
@@ -59,13 +72,14 @@ python ./src/manage.py runserver
 
 The django server will be served on: http://localhost:8000
 
+
 ## Production
 
 This project can be run in production using docker.
 
 Ensure that you run docker as a non-root user who is part of the `docker` group.
 
-Also, update the `.env` file to have values appropriate for production usage.
+Also, update the `.env` file to contain production appropriate values and remove the following variables: `SKIP_TASK_QUEUE` and `DEBUG`.
 
 To run the docker containers, enter the following commands:
 

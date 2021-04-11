@@ -54,6 +54,7 @@ class DateModel(models.Model):
 class Store(DateModel):
     name = models.CharField(max_length=250)
     slug = models.CharField(max_length=250, unique=True, db_index=True)
+    enabled = models.BooleanField(default=True, db_index=True)
     website = models.CharField(max_length=250)
 
     def search(self, term):
@@ -75,7 +76,27 @@ class SearchResult(DateModel):
     # Override created to support manually setting the field.
     created = models.DateTimeField(default=now, db_index=True)
 
-    MAX_CACHE_AGE = 600
+    MAX_CACHE_AGE = 0
+
+    class Meta:
+        ordering = ['created']
+
+
+class SearchError(DateModel):
+    term = models.ForeignKey(
+        'drf_mtg_card_crawler.SearchTerm',
+        related_name='errors',
+        on_delete=models.CASCADE
+    )
+    store = models.ForeignKey(
+        'drf_mtg_card_crawler.Store', on_delete=models.CASCADE
+    )
+    error = models.CharField(max_length=250)
+    expires = models.DateTimeField()
+    # Override created to support manually setting the field.
+    created = models.DateTimeField(default=now, db_index=True)
+
+    MAX_CACHE_AGE = 0
 
     class Meta:
         ordering = ['created']
@@ -112,7 +133,7 @@ class Search(DateModel):
     )
 
     # Max number of retries allowed.
-    MAX_RETRIES = 3
+    MAX_RETRIES = 0
 
     def get_stores(self):
        return self.stores.all() if self.stores.all().exists() \
@@ -131,6 +152,20 @@ class Search(DateModel):
             store=store,
             expires__gt=now(),
         ).distinct("url").order_by("url", "created")
+
+    def get_cachable_errors(self, term, store, nocache=False):
+        """
+        Get any search errors that could be used as a cache source.
+        """
+
+        if nocache:
+            return SearchError.objects.none()
+
+        return SearchError.objects.filter(
+            term__term=term.term,
+            store=store,
+            expires__gt=now(),
+        ).distinct("error").order_by("error", "created")
 
     def process_async(self):
         tasks.process_search.delay(self.id)
@@ -169,6 +204,7 @@ class Search(DateModel):
             )
             no_cache_expires = now()
 
+            search_errors = []
             search_results = []
             for term in self.terms.all():
                 # Define pools for parallelism.
@@ -180,6 +216,22 @@ class Search(DateModel):
                     cachable_results = self.get_cachable_results(term, store)
 
                     if cachable_results.exists():
+                        # Get errors that can be used as a cache base.
+                        # We only do this if previous results were found.
+                        cachable_errors = self.get_cachable_errors(term, store)
+
+                         # Cachable search errors exist, copy them.
+                        for cachable_error in cachable_errors:
+                            search_errors.append(
+                                SearchError(
+                                    term=term,
+                                    store=store,
+                                    error=cachable_error.error,
+                                    expires=no_cache_expires,
+                                    created=cachable_error.created
+                                )
+                            )
+
                         # Cachable search results exist, copy them.
                         for cachable_result in cachable_results:
                             search_results.append(
@@ -194,17 +246,34 @@ class Search(DateModel):
                             )
                     else:
                         def _parallel_search(store, term, expires):
+                            p_errors = []
                             p_results = []
-                            for s_result in store.search(term.term):
+
+                            # Perform the search.
+                            search = store.search(term.term)
+
+                            # Create search errors.
+                            if search[1]:
+                                p_errors.append(
+                                    SearchError(
+                                        term=term,
+                                        store=store,
+                                        expires=expires,
+                                        error=search[1]
+                                    )
+                                )
+
+                            # Create search results.
+                            for result in search[0]:
                                 p_results.append(
                                     SearchResult(
                                         term=term,
                                         store=store,
                                         expires=expires,
-                                        **s_result
+                                        **result
                                     )
                                 )
-                            return p_results
+                            return p_results, p_errors
 
                         term_futures.append(
                             term_pool.submit(
@@ -213,8 +282,12 @@ class Search(DateModel):
                         )
 
                 for x in as_completed(term_futures):
-                    search_results.extend(x.result())
+                    results, errors = x.result()
+                    search_errors.extend(errors)
+                    search_results.extend(results)
 
+            # Add errors.
+            SearchError.objects.bulk_create(search_errors)
             # Add search results.
             SearchResult.objects.bulk_create(search_results)
 
@@ -225,12 +298,18 @@ class Search(DateModel):
             self.exceptions = ArrayAppend(
                 'exceptions', common.truncate(str(exc), 297, suffix='...')
             )
+            # If this has reached the max retries, then raise a fatal error.
             if retries > self.MAX_RETRIES:
                 exc = SearchMaxRetriesExceededError()
                 self.status = SearchStatus.FAILED
                 self.save(update_fields=["exceptions", "status", "updated",])
                 raise exc
 
+            # Unset all results before re-queueing.
+            self.errors.all().delete()
+            self.results.all().delete()
+
+            # Set to queued again.
             self.retries = retries
             self.status = SearchStatus.QUEUED
             self.save(

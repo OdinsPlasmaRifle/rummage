@@ -3,7 +3,7 @@ from logging import getLogger
 from django.db import transaction
 from rest_framework import serializers, exceptions
 
-from .models import Store, Search, SearchTerm, SearchResult
+from .models import Store, Search, SearchError, SearchTerm, SearchResult
 
 
 logger = getLogger('django')
@@ -17,8 +17,17 @@ class StoreSerializer(serializers.ModelSerializer):
         read_only_fields = ('id', 'name', 'slug', 'website',)
 
 
+class SearchErrorSerializer(serializers.ModelSerializer):
+    store = serializers.IntegerField(source="store.id")
+
+    class Meta:
+        model = SearchError
+        fields = ('store', 'error',)
+        read_only_fields = ('store', 'error',)
+
+
 class SearchResultSerializer(serializers.ModelSerializer):
-    store = StoreSerializer(read_only=True)
+    store = serializers.IntegerField(source="store.id")
 
     class Meta:
         model = SearchResult
@@ -27,12 +36,13 @@ class SearchResultSerializer(serializers.ModelSerializer):
 
 
 class SearchTermSerializer(serializers.ModelSerializer):
+    errors = SearchErrorSerializer(read_only=True, many=True)
     results = SearchResultSerializer(read_only=True, many=True)
 
     class Meta:
         model = SearchTerm
-        fields = ('term', 'results',)
-        read_only_fields = ('term', 'results',)
+        fields = ('term', 'errors', 'results',)
+        read_only_fields = ('term', 'errors', 'results',)
 
 
 class SearchSerializer(serializers.ModelSerializer):
@@ -42,9 +52,9 @@ class SearchSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Search
-        fields = ('id', 'status', 'retries', 'terms', 'created', 'updated',)
+        fields = ('id', 'status', 'terms', 'created', 'updated',)
         read_only_fields = (
-            'id', 'status', 'retries', 'terms', 'created', 'updated',
+            'id', 'status', 'terms', 'created', 'updated',
         )
 
 
@@ -72,17 +82,19 @@ class CreateSearchSerializer(SearchSerializer):
         read_only_fields = ('id', 'status', 'retries', 'created', 'updated',)
 
     def validate_stores(self, stores):
-        return Store.objects.filter(slug__in=stores)
+        return Store.objects.filter(slug__in=stores, enabled=True)
 
     def create(self, validated_data):
+        stores = validated_data.pop("stores", None)
+        terms = validated_data.pop("terms", [])
+
+        # Get default stores.
+        if stores is None:
+            stores = Store.objects.filter(enabled=True)
+
         with transaction.atomic():
-            stores = validated_data.pop("stores", None)
-            terms = validated_data.pop("terms", [])
             search = Search.objects.create(**validated_data)
-
-            if stores:
-                search.stores.set(stores)
-
+            search.stores.set(stores)
             for term in terms:
                 SearchTerm.objects.create(search=search, term=term)
 

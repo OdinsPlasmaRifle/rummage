@@ -5,6 +5,7 @@
     "fields": {
       "name": "Luckshack",
       "slug": "luckshack",
+      "enabled": true,
       "website": "https://luckshack.co.za",
       "created": "2020-03-28T09:01:08.745Z",
       "updated": "2020-03-28T09:01:08.745Z"
@@ -16,6 +17,7 @@
     "fields": {
       "name": "Dracoti",
       "slug": "dracoti",
+      "enabled": true,
       "website": "https://shop.dracoti.co.za",
       "created": "2020-03-28T09:01:08.745Z",
       "updated": "2020-03-28T09:01:08.745Z"
@@ -27,6 +29,7 @@
     "fields": {
       "name": "Top Deck",
       "slug": "topdecksa",
+      "enabled": true,
       "website": "https://store.topdecksa.co.za",
       "created": "2020-03-28T09:01:08.745Z",
       "updated": "2020-03-28T09:01:08.745Z"
@@ -38,6 +41,7 @@
     "fields": {
       "name": "Sad Robot",
       "slug": "sadrobot",
+      "enabled": true,
       "website": "https://www.sadrobot.co.za",
       "created": "2020-03-28T09:01:08.745Z",
       "updated": "2020-03-28T09:01:08.745Z"
@@ -49,6 +53,7 @@
     "fields": {
       "name": "HQ Gaming",
       "slug": "hqgaming",
+      "enabled": false,
       "website": "https://hqgaming.co.za",
       "created": "2020-03-28T09:01:08.745Z",
       "updated": "2020-03-28T09:01:08.745Z"
@@ -60,6 +65,7 @@
     "fields": {
       "name": "The Warren",
       "slug": "thewarren",
+      "enabled": true,
       "website": "http://www.thewarren.co.za",
       "created": "2020-03-28T09:01:08.745Z",
       "updated": "2020-03-28T09:01:08.745Z"
@@ -71,6 +77,7 @@
     "fields": {
       "name": "A.I. Fest",
       "slug": "aifest",
+      "enabled": true,
       "website": "https://store.ai-fest.co.za",
       "created": "2020-03-28T09:01:08.745Z",
       "updated": "2020-03-28T09:01:08.745Z"
@@ -82,6 +89,7 @@
     "fields": {
       "name": "Battle Wizards",
       "slug": "battlewizards",
+      "enabled": true,
       "website": "http://www.battlewizards.co.za",
       "created": "2020-03-28T09:01:08.745Z",
       "updated": "2020-03-28T09:01:08.745Z"
@@ -93,6 +101,7 @@
     "fields": {
       "name": "Underworld Connections",
       "slug": "underworldconnections",
+      "enabled": true,
       "website": "https://underworldconnections.com",
       "created": "2020-03-28T09:01:08.745Z",
       "updated": "2020-03-28T09:01:08.745Z"
