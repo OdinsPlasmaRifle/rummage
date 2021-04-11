@@ -6,11 +6,14 @@ MtG card searcher for South African online stores. The following stores are supp
 - Dracoti
 - Top Deck
 - Sad Robot
-- HQ Gaming
 - The Warren
 - A.I. Fest
 - Battle Wizards
 - Underworld Connections
+
+Previously supported:
+
+- HQ Gaming - No longer operating.
 
 ## Development
 
