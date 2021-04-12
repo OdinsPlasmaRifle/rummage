@@ -1,6 +1,6 @@
 [
   {
-    "model": "drf_mtg_card_crawler.store",
+    "model": "rummage.store",
     "pk": 1,
     "fields": {
       "name": "Luckshack",
@@ -12,7 +12,7 @@
     }
   },
   {
-    "model": "drf_mtg_card_crawler.store",
+    "model": "rummage.store",
     "pk": 2,
     "fields": {
       "name": "Dracoti",
@@ -24,7 +24,7 @@
     }
   },
   {
-    "model": "drf_mtg_card_crawler.store",
+    "model": "rummage.store",
     "pk": 3,
     "fields": {
       "name": "Top Deck",
@@ -36,7 +36,7 @@
     }
   },
   {
-    "model": "drf_mtg_card_crawler.store",
+    "model": "rummage.store",
     "pk": 4,
     "fields": {
       "name": "Sad Robot",
@@ -48,7 +48,7 @@
     }
   },
   {
-    "model": "drf_mtg_card_crawler.store",
+    "model": "rummage.store",
     "pk": 5,
     "fields": {
       "name": "HQ Gaming",
@@ -60,7 +60,7 @@
     }
   },
   {
-    "model": "drf_mtg_card_crawler.store",
+    "model": "rummage.store",
     "pk": 6,
     "fields": {
       "name": "The Warren",
@@ -72,7 +72,7 @@
     }
   },
   {
-    "model": "drf_mtg_card_crawler.store",
+    "model": "rummage.store",
     "pk": 7,
     "fields": {
       "name": "A.I. Fest",
@@ -84,7 +84,7 @@
     }
   },
   {
-    "model": "drf_mtg_card_crawler.store",
+    "model": "rummage.store",
     "pk": 8,
     "fields": {
       "name": "Battle Wizards",
@@ -96,7 +96,7 @@
     }
   },
   {
-    "model": "drf_mtg_card_crawler.store",
+    "model": "rummage.store",
     "pk": 9,
     "fields": {
       "name": "Underworld Connections",

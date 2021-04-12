@@ -11,7 +11,7 @@ admin.autodiscover()
 
 schema_view = get_schema_view(
    openapi.Info(
-      title="MtG Card Crawler",
+      title="Rummage",
       default_version='v1',
       description=""
    ),

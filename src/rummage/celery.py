@@ -6,10 +6,10 @@ from django.conf import settings
 
 if not os.environ.get("DJANGO_SETTINGS_MODULE", ''):
     os.environ.setdefault(
-    	"DJANGO_SETTINGS_MODULE", "drf_mtg_card_crawler.settings"
+    	"DJANGO_SETTINGS_MODULE", "rummage.settings"
     )
 
-app = Celery('drf_mtg_card_crawler')
+app = Celery('rummage')
 app.config_from_object('django.conf:settings', namespace='CELERY')
 app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
 

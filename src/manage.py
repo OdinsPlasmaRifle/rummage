@@ -3,7 +3,7 @@ import sys
 
 
 def main():
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'drf_mtg_card_crawler.settings')
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'rummage.settings')
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:

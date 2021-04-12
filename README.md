@@ -1,4 +1,4 @@
-# Django MtG Card Crawler
+# Rummage
 
 Product searcher for South African MTG stores. The following stores are supported:
 
@@ -92,17 +92,17 @@ This will spin up all the docker containers required.
 You can then migrate the database:
 
 ```shell
-docker exec drf-mtg-card-crawler_web_1 /bin/sh -c "python manage.py migrate"
+docker exec rummage_web_1 /bin/sh -c "python manage.py migrate"
 ```
 
 Load the store fixtures:
 
 ```shell
-docker exec drf-mtg-card-crawler_web_1 /bin/sh -c "python manage.py loaddata stores.json"
+docker exec rummage_web_1 /bin/sh -c "python manage.py loaddata stores.json"
 ```
 
 Collect the static files:
 
 ```shell
-docker exec drf-mtg-card-crawler_web_1 /bin/sh -c "python manage.py collectstatic --no-input"
+docker exec rummage_web_1 /bin/sh -c "python manage.py collectstatic --no-input"
 ```

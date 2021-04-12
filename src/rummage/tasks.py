@@ -18,7 +18,7 @@ def clear_searches():
     Task to clear searches on a sechdule.
     """
 
-    from drf_mtg_card_crawler.models import Search
+    from rummage.models import Search
 
     state_change_date_from = now() - timedelta(days=7)
     # Round about method to call delete because limit cannot be used on deletes.
@@ -39,8 +39,8 @@ def process_search(self, search_id):
     Process a search in the background.
     """
 
-    from drf_mtg_card_crawler.models import Search
-    from drf_mtg_card_crawler.exceptions import (
+    from rummage.models import Search
+    from rummage.exceptions import (
         SearchFatalError, SearchMaxRetriesExceededError
     )
 

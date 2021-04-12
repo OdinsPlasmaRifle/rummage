@@ -18,7 +18,7 @@ services:
     build: .
     env_file: $PWD/.env
     restart: always
-    command: /bin/sh -c "gunicorn drf_mtg_card_crawler.wsgi:application --config file:drf_mtg_card_crawler/gunicorn.py"
+    command: /bin/sh -c "gunicorn rummage.wsgi:application --config file:rummage/gunicorn.py"
     expose:
       - "8000"
     volumes:
@@ -33,7 +33,7 @@ services:
     build: .
     env_file: $PWD/.env
     restart: always
-    command: /bin/sh -c "celery -A drf_mtg_card_crawler.celery worker --loglevel=INFO --concurrency=1 -Q general-${CELERY_ID}"
+    command: /bin/sh -c "celery -A rummage.celery worker --loglevel=INFO --concurrency=1 -Q general-${CELERY_ID}"
     networks:
       - main
     depends_on:
@@ -44,7 +44,7 @@ services:
     build: .
     env_file: $PWD/.env
     restart: always
-    command: /bin/sh -c "celery -A drf_mtg_card_crawler.celery worker --beat --loglevel=INFO --pidfile= --concurrency=1 -Q dummy-queue-${CELERY_ID}"
+    command: /bin/sh -c "celery -A rummage.celery worker --beat --loglevel=INFO --pidfile= --concurrency=1 -Q dummy-queue-${CELERY_ID}"
     networks:
       - main
     depends_on:

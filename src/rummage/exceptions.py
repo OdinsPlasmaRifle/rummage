@@ -3,7 +3,7 @@ from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy as _
 
 
-class DRFMTGCardCrawlerException(Exception):
+class RummageException(Exception):
     status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
     default_detail = _('A server error occurred.')
     default_error_slug = 'internal_error'
@@ -20,7 +20,7 @@ class DRFMTGCardCrawlerException(Exception):
         return self.detail
 
 
-class SearchError(DRFMTGCardCrawlerException):
+class SearchError(RummageException):
     default_detail = 'Search error.'
     default_error_slug = 'search_error'
 

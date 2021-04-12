@@ -10,13 +10,13 @@ from django.db.models.expressions import Func, Expression, F
 from django.contrib.postgres.fields import JSONField, ArrayField
 from enumfields import EnumField
 
-from drf_mtg_card_crawler.enums import SearchStatus
-from drf_mtg_card_crawler.exceptions import (
+from rummage.enums import SearchStatus
+from rummage.exceptions import (
     SearchAlreadyProcessingError, SearchMaxRetriesExceededError
 )
-import drf_mtg_card_crawler.tasks as tasks
-import drf_mtg_card_crawler.stores
-import drf_mtg_card_crawler.common as common
+import rummage.tasks as tasks
+import rummage.stores
+import rummage.common as common
 
 
 logger = getLogger('django')
@@ -58,17 +58,17 @@ class Store(DateModel):
     website = models.CharField(max_length=250)
 
     def search(self, term):
-        return getattr(drf_mtg_card_crawler.stores, self.slug)(term)
+        return getattr(rummage.stores, self.slug)(term)
 
 
 class SearchResult(DateModel):
     term = models.ForeignKey(
-        'drf_mtg_card_crawler.SearchTerm',
+        'rummage.SearchTerm',
         related_name='results',
         on_delete=models.CASCADE
     )
     store = models.ForeignKey(
-        'drf_mtg_card_crawler.Store', on_delete=models.CASCADE
+        'rummage.Store', on_delete=models.CASCADE
     )
     url = models.CharField(max_length=250)
     metadata = JSONField(null=True, default=dict)
@@ -84,12 +84,12 @@ class SearchResult(DateModel):
 
 class SearchError(DateModel):
     term = models.ForeignKey(
-        'drf_mtg_card_crawler.SearchTerm',
+        'rummage.SearchTerm',
         related_name='errors',
         on_delete=models.CASCADE
     )
     store = models.ForeignKey(
-        'drf_mtg_card_crawler.Store', on_delete=models.CASCADE
+        'rummage.Store', on_delete=models.CASCADE
     )
     error = models.CharField(max_length=250)
     expires = models.DateTimeField()
@@ -104,7 +104,7 @@ class SearchError(DateModel):
 
 class SearchTerm(DateModel):
     search = models.ForeignKey(
-        'drf_mtg_card_crawler.Search',
+        'rummage.Search',
         related_name='terms',
         on_delete=models.CASCADE
     )
@@ -120,7 +120,7 @@ class Search(DateModel):
         db_index=True,
         default=uuid.uuid4
     )
-    stores = models.ManyToManyField('drf_mtg_card_crawler.Store')
+    stores = models.ManyToManyField('rummage.Store')
     retries = models.IntegerField(default=0)
     exceptions = ArrayField(
         models.CharField(max_length=300), null=True, blank=True, default=list

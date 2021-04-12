@@ -25,7 +25,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'drf_yasg',
-    'drf_mtg_card_crawler',
+    'rummage',
 ]
 
 MIDDLEWARE = [
@@ -38,7 +38,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'drf_mtg_card_crawler.urls'
+ROOT_URLCONF = 'rummage.urls'
 
 TEMPLATES = [
     {
@@ -56,7 +56,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'drf_mtg_card_crawler.wsgi.application'
+WSGI_APPLICATION = 'rummage.wsgi.application'
 
 
 # Database
@@ -199,7 +199,7 @@ CELERY_IGNORE_RESULT = True
 
 CELERY_BEAT_SCHEDULE = {
     'clear_searches': {
-        'task': 'drf_mtg_card_crawler.tasks.clear_searches',
+        'task': 'rummage.tasks.clear_searches',
         'schedule': crontab(hour=1),
         'args': ()
     }
