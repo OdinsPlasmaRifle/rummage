@@ -1,8 +1,10 @@
 from django.urls import include, path, re_path
 from django.contrib import admin
+from django.views.generic import TemplateView
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework import permissions
+
 
 from . import views
 
@@ -23,6 +25,13 @@ urlpatterns = [
     # Administration
     re_path(r'^admin/', admin.site.urls),
 
+    # Index
+    re_path(
+      r'^$',
+      TemplateView.as_view(template_name="index.html"),
+      name='index'
+    ),
+
     # Swagger
     re_path(
       r'^swagger(?P<format>\.json|\.yaml)$',
@@ -35,7 +44,7 @@ urlpatterns = [
       name='schema-swagger-ui'
     ),
     re_path(
-      r'^$',
+      r'^redoc/$',
       schema_view.with_ui('redoc', cache_timeout=None),
       name='schema-redoc'
     ),

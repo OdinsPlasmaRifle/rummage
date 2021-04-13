@@ -43,7 +43,9 @@ ROOT_URLCONF = 'rummage.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'rummage/templates/'),
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

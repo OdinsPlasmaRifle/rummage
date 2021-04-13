@@ -7,7 +7,7 @@ from django.db import models
 from django.utils.timezone import now
 from django.db.models import Value
 from django.db.models.expressions import Func, Expression, F
-from django.contrib.postgres.fields import JSONField, ArrayField
+from django.contrib.postgres.fields import ArrayField
 from enumfields import EnumField
 
 from rummage.enums import SearchStatus
@@ -71,7 +71,7 @@ class SearchResult(DateModel):
         'rummage.Store', on_delete=models.CASCADE
     )
     url = models.CharField(max_length=250)
-    metadata = JSONField(null=True, default=dict)
+    metadata = models.JSONField(null=True, default=dict)
     expires = models.DateTimeField()
     # Override created to support manually setting the field.
     created = models.DateTimeField(default=now, db_index=True)

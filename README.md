@@ -1,6 +1,6 @@
 # Rummage
 
-Product searcher for South African MTG stores. The following stores are supported:
+Product searcher for MTG stores in South Africa. The following stores are supported:
 
 - Luckshack
 - Dracoti
@@ -35,7 +35,7 @@ Setup a Python virtual environment first. Then run the following commands from w
 Install the necessary python packages:
 
 ```shell
-pip install -r requirements.txt
+pip install -r src/requirements.txt
 ```
 
 Add a `.env` file to the project root. Use the `.example.env` file as a template.
