@@ -121,8 +121,12 @@ def topdecksa(term):
     else:
         for r in res:
             url = r.pop("url", None)
+            name = r.pop("title", None)
+            image = r.pop("image", None)
             results.append({
                 "url": f"https://store.topdecksa.co.za{url}",
+                "name": name,
+                "image": image,
                 "metadata": r
             })
 

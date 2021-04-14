@@ -71,6 +71,8 @@ class SearchResult(DateModel):
         'rummage.Store', on_delete=models.CASCADE
     )
     url = models.CharField(max_length=250)
+    name = models.CharField(max_length=250, null=True)
+    image = models.CharField(max_length=250, null=True)
     metadata = models.JSONField(null=True, default=dict)
     expires = models.DateTimeField()
     # Override created to support manually setting the field.

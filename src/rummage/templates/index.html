@@ -34,7 +34,7 @@
 						<div class="box">
 							<div class="field">
 								<div class="control has-icons-left">
-									<input class="input is-large" type="text" placeholder="Search">
+									<input id="search" class="input is-large" type="text" placeholder="Search">
 									<span class="icon is-medium is-left">
 										<i class="fas fa-search"></i>
 									</span>
@@ -42,53 +42,8 @@
 							</div>
 						</div>
 
-						<div class="box">
-							<article class="media">
-								<figure class="media-left">
-									<p class="image">
-										<img src="https://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=417683&type=card" style="width: 128px; object-fit: cover;">
-									</p>
-								</figure>
-								<div class="media-content">
-									<div class="content is-large">
-										<p>
-											<strong>Chandra, Torch of Defiance</strong> <small>@Luckshack</small>
-											<br>
-											Available at Luckshack.
-										</p>
-									</div>
-									<nav class="level is-mobile">
-										<div class="level-left">
-											<a class="level-item" target="_blank" href="https://gatherer.wizards.com/pages/Card/Details.aspx?multiverseid=417683">
-												Go to store
-											</a>
-										</div>
-									</nav>
-								</div>
-							</article>
-							<article class="media">
-								<figure class="media-left">
-									<p class="image">
-										<img src="https://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=417683&type=card" style="width: 128px; object-fit: cover;">
-									</p>
-								</figure>
-								<div class="media-content">
-									<div class="content is-medium">
-										<p>
-											<strong>Chandra, Torch of Defiance</strong> <small>@Luckshack</small>
-											<br>
-											Available at Luckshack.
-										</p>
-									</div>
-									<nav class="level is-mobile">
-										<div class="level-left">
-											<a class="level-item" target="_blank" href="https://gatherer.wizards.com/pages/Card/Details.aspx?multiverseid=417683">
-												Go to store
-											</a>
-										</div>
-									</nav>
-								</div>
-							</article>
+						<div id="results" class="box">
+
 						</div>
 					</div>
 				</div>
@@ -109,5 +64,148 @@
 				</div>
 			</div>
 		</section>
+
+		<script>
+			var url = "http://localhost:8080/"
+			var searchInput = document.getElementById("search");
+			var resultsDiv = document.getElementById("results");
+
+			function timeout(ms) {
+			    return new Promise(resolve => setTimeout(resolve, ms));
+			}
+
+			async function getData(url = '') {
+				const response = await fetch(url, {
+					method: 'GET',
+					mode: 'cors',
+					cache: 'no-cache',
+					credentials: 'same-origin',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					redirect: 'follow',
+					referrerPolicy: 'no-referrer',
+				});
+				return response.json();
+			}
+
+			async function postData(url = '', data = {}) {
+				const response = await fetch(url, {
+					method: 'POST',
+					mode: 'cors',
+					cache: 'no-cache',
+					credentials: 'same-origin',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					redirect: 'follow',
+					referrerPolicy: 'no-referrer',
+					body: JSON.stringify(data)
+				});
+				return response.json();
+			}
+
+			// Poll a search ID for a complete status.
+			async function pollSearch(searchId) {
+				return await getData(url + "searches/" + searchId + "/")
+					.then(data => {
+						if (data.status !== "complete") {
+							//await timeout(2000)
+							return pollSearch(searchId);
+						}
+						return data
+					})
+			}
+
+			async function buildResults(data) {
+				results = data.terms[0].results
+				results.forEach(function (item, index) {
+					// Main article element.
+					var article = document.createElement('article');
+					article.className += "media";
+					// Main figure of the article.
+					var figure = document.createElement("figure");
+					figure.className = "media-left"
+					var figure_a = document.createElement("a");
+					figure_a.className = "image"
+					figure_a.href = item.url;
+					figure_a.target = "_blank"
+					var figure_img = document.createElement("img");
+					figure_img.src = item.image
+					figure_img.style = "width: 128px; object-fit: cover;"
+					figure_a.appendChild(figure_img);
+					figure.appendChild(figure_a);
+					// Media content within the article.
+					var media = document.createElement("div");
+					media.className = "media-content"
+					var content = document.createElement("div");
+					content.className = "content is-large"
+					// Content section.
+					var content_p = document.createElement("p");
+					var content_strong = document.createElement("strong");
+					content_strong.innerHTML = item.name
+					var content_small = document.createElement("small");
+					content_small.innerHTML = "@shop";
+					var content_span = document.createElement("span");
+					content_span.innerHTML = "<br>Text about the card";
+					content_p.appendChild(content_strong);
+					content_p.appendChild(content_small);
+					content_p.appendChild(content_span)
+					content.appendChild(content_p)
+					// Level and links.
+					var level = document.createElement("nav");
+					level.className = "level"
+					var level_left = document.createElement("div");
+					level_left.className = "level-left"
+					var level_a = document.createElement("a");
+					level_a.className = "level-item";
+					level_a.innerHTML = "Go to store";
+					level_a.target = "_blank"
+					level_a.href = item.url
+					level_left.appendChild(level_a);
+					level.appendChild(level_left)
+					content.appendChild(level)
+					// Append the elements to each other.
+					media.appendChild(content)
+					article.appendChild(figure);
+					article.appendChild(media);
+					// Append the completed article to the results div.
+					resultsDiv.appendChild(article);
+				});
+			}
+
+			async function doSearch(event) {
+				if (event.keyCode === 13) {
+					event.preventDefault();
+					// Disable the deatch while searching.
+					searchInput.disabled = true
+					// Clear the results box
+					resultsDiv.innerHTML = "";
+
+					const initial = await postData(url + "searches/", { terms: [search.value] })
+						.then(data => {
+							return data
+						})
+						.catch(error => {
+							console.log(error)
+						});
+
+					const final = await pollSearch(initial.id)
+						.then(data => {
+							return data
+						})
+						.catch(error => {
+							console.log(error)
+						});
+
+					// Enabled the search input again.
+					searchInput.disabled = false
+					// Build the results of the final data.
+					buildResults(final)
+				}
+			}
+
+			searchInput.addEventListener("keyup", (event) => doSearch(event), false);
+		</script>
 	</body>
 </html>
