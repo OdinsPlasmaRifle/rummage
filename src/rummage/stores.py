@@ -38,8 +38,12 @@ def luckshack(term):
     else:
         for r in res:
             url = r.pop("url", None)
+            name = r.pop("name", None)
+            image = r.pop("image", None)
             results.append({
                 "url": url,
+                "name": name,
+                "image": image,
                 "metadata": r
             })
 
@@ -82,8 +86,12 @@ def dracoti(term):
         for r in res:
             if r["type"] == "product":
                 url = r.pop("url", None)
+                name = r.pop("title", None)
+                image = r.pop("image_url", None)
                 results.append({
                     "url": url,
+                    "name": name,
+                    "image": image,
                     "metadata": r
                 })
 
@@ -158,8 +166,12 @@ def sadrobot(term):
     else:
         for r in res:
             url = r.pop("url", None)
+            name = r.pop("value", None)
+            image = r.pop("img", None)
             results.append({
                 "url": url,
+                "name": name,
+                "image": image,
                 "metadata": r
             })
 
@@ -232,10 +244,13 @@ def thewarren(term):
         error = RESPONSE_FORMAT_ERROR
     else:
         for r in res:
-            slug = r.get("slug", "")
+            slug = r.pop("slug", None)
             url = "http://www.thewarren.co.za/shop/card/{}".format(slug)
+            name = r.pop("name", None)
             results.append({
                 "url": url,
+                "name": name,
+                "image": "https://via.placeholder.com/150.jpg",
                 "metadata": r
             })
 
@@ -299,9 +314,9 @@ def battlewizards(term):
 
         data = {
             "url": title_box[0].a.get("href"),
+            "name": title_box[0].a.string,
+            "image": image.get("data-src"),
             "metadata": {
-                "title": title_box[0].a.string,
-                "image": image.get("data-src"),
                 "price": price_box[0].string
             }
         }
@@ -336,9 +351,9 @@ def underworldconnections(term):
 
         data = {
             "url": title_box[0].a.get("href"),
+            "name": title_box[0].a.string,
+            "image": image.get("data-src"),
             "metadata": {
-                "title": title_box[0].a.string,
-                "image": image.get("data-src"),
                 "price": price_box[0].find(text=True, recursive=False)
             }
         }
