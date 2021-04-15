@@ -237,6 +237,8 @@ class Search(DateModel):
                                     term=term,
                                     store=store,
                                     url=cachable_result.url,
+                                    name=cachable_result.name,
+                                    image=cachable_result.image,
                                     metadata=cachable_result.metadata,
                                     expires=no_cache_expires,
                                     created=cachable_result.created
