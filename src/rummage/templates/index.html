@@ -10,11 +10,33 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css">
-
-		<script src="https://use.fontawesome.com/0575d72b11.js"></script>
+		<script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
 	</head>
 	<body>
 		<section class="hero is-link is-medium">
+			<div class="hero-head">
+				<nav class="navbar">
+					<div class="container">
+						<div class="navbar-brand">
+							<a class="navbar-item">
+								Rummage
+							</a>
+						</div>
+						<div id="navbarMenuHeroA" class="navbar-menu">
+							<div class="navbar-end">
+								<span class="navbar-item">
+									<a target="_blank" href="https://github.com/odinsplasmarifle/rummage" class="button is-primary is-inverted">
+										<span class="icon">
+											<i class="fab fa-github"></i>
+										</span>
+										<span>Source</span>
+									</a>
+								</span>
+							</div>
+						</div>
+					</div>
+				</nav>
+			</div>
 			<div class="hero-body">
 				<div class="container has-text-centered">
 					<p class="title is-1">
@@ -56,8 +78,7 @@
 					<div class="column is-half">
 						<div class="content has-text-centered">
 							<p>
-								<strong>Rummage</strong> by <a href="https://github.com/OdinsPlasmaRifle">OdinsPlasmaRifle</a>. The source code is licensed
-								<a href="http://opensource.org/licenses/mit-license.php">MIT</a>.
+								<strong>Rummage</strong> by <a href="https://github.com/OdinsPlasmaRifle">OdinsPlasmaRifle</a>.
 							</p>
 						</div>
 					</div>
@@ -67,6 +88,7 @@
 
 		<script>
 			var url = "http://localhost:8080/"
+			var stores = {}
 			var searchInput = document.getElementById("search");
 			var resultsDiv = document.getElementById("results");
 
@@ -142,29 +164,20 @@
 					content.className = "content is-large";
 					// Content section.
 					var content_p = document.createElement("p");
+					var content_a = document.createElement("a");
+					content_a.href = item.url;
+					content_a.target = "_blank";
 					var content_strong = document.createElement("strong");
 					content_strong.innerHTML = item.name;
 					var content_small = document.createElement("small");
-					content_small.innerHTML = "@shop";
+					content_small.innerHTML = " @" + stores[item.store].name;
 					var content_span = document.createElement("span");
 					content_span.innerHTML = "<br>Text about the card";
-					content_p.appendChild(content_strong);
+					content_a.appendChild(content_strong);
+					content_p.appendChild(content_a)
 					content_p.appendChild(content_small);
 					content_p.appendChild(content_span);
 					content.appendChild(content_p);
-					// Level and links.
-					var level = document.createElement("nav");
-					level.className = "level";
-					var level_left = document.createElement("div");
-					level_left.className = "level-left";
-					var level_a = document.createElement("a");
-					level_a.className = "level-item";
-					level_a.innerHTML = "Go to store";
-					level_a.target = "_blank";
-					level_a.href = item.url;
-					level_left.appendChild(level_a);
-					level.appendChild(level_left);
-					content.appendChild(level);
 					// Append the elements to each other.
 					media.appendChild(content);
 					article.appendChild(figure);
@@ -178,7 +191,7 @@
 				// Disable the deatch while searching.
 				searchInput.disabled = true;
 				// Clear the results box
-				resultsDiv.innerHTML = "";
+				resultsDiv.innerHTML = "Searching...";
 
 				const initial = await postData(url + "searches/", { terms: [search.value] })
 					.then(data => {
@@ -198,9 +211,29 @@
 
 				// Enabled the search input again.
 				searchInput.disabled = false;
+				// Clear the loading text
+				resultsDiv.innerHTML = "";
 				// Build the results of the final data.
 				buildResults(final);
 			}
+
+			async function getStores() {
+				const data = await getData(url + "stores/")
+					.then(data => {
+						return data;
+					})
+					.catch(error => {
+						console.log(error);
+					});
+
+				const obj = {}
+				data.results.forEach(function (item, index) {
+					obj[item.id] = item
+				});
+				return obj
+			}
+
+			getStores().then(data => {stores = data});
 
 			searchInput.addEventListener("keyup", async event => {
 				if (event.keyCode === 13) {
