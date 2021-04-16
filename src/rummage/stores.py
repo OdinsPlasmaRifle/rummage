@@ -21,7 +21,6 @@ def luckshack(term):
     try:
         response = requests.get(url, timeout=5)
     except requests.exceptions.RequestException:
-        logger.exception(exc)
         return results, CONNECTION_ERROR
 
     if response.status_code != 200:
@@ -70,7 +69,6 @@ def dracoti(term):
     try:
         response = requests.post(url, data, timeout=5)
     except requests.exceptions.RequestException:
-        logger.exception(exc)
         return results, CONNECTION_ERROR
 
     if response.status_code != 200:
@@ -112,7 +110,6 @@ def topdecksa(term):
     try:
         response = requests.get(url, timeout=5)
     except requests.exceptions.RequestException:
-        logger.exception(exc)
         return results, CONNECTION_ERROR
 
     if response.status_code != 200:
@@ -149,7 +146,6 @@ def sadrobot(term):
     try:
         response = requests.get(url, timeout=5)
     except requests.exceptions.RequestException:
-        logger.exception(exc)
         return results, CONNECTION_ERROR
 
     if response.status_code != 200:
@@ -192,7 +188,6 @@ def hqgaming(term):
     try:
         response = requests.get(url, timeout=5)
     except requests.exceptions.RequestException:
-        logger.exception(exc)
         return results, CONNECTION_ERROR
 
     if response.status_code != 200:
@@ -228,7 +223,6 @@ def thewarren(term):
     try:
         response = requests.get(url, headers=headers, timeout=5)
     except requests.exceptions.RequestException:
-        logger.exception(exc)
         return results, CONNECTION_ERROR
 
     if response.status_code != 200:
@@ -265,7 +259,6 @@ def aifest(term):
     try:
         response = requests.get(url, timeout=5)
     except requests.exceptions.RequestException:
-        logger.exception(exc)
         return results, CONNECTION_ERROR
 
     if response.status_code != 200:
@@ -298,7 +291,6 @@ def battlewizards(term):
     try:
         response = requests.get(url, timeout=5)
     except requests.exceptions.RequestException:
-        logger.exception(exc)
         return results, CONNECTION_ERROR
 
     if response.status_code != 200:
@@ -333,7 +325,6 @@ def underworldconnections(term):
     try:
         response = requests.get(url, timeout=5)
     except requests.exceptions.RequestException:
-        logger.exception(exc)
         return results, CONNECTION_ERROR
 
     if response.status_code != 200:

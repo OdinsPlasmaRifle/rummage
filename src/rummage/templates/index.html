@@ -131,7 +131,7 @@
 			async function pollSearch(searchId) {
 				return await getData(url + "searches/" + searchId + "/")
 					.then(async data => {
-						if (data.status !== "complete") {
+						if (data.status === "queued" || data.status === "processing") {
 							await timeout(2000);
 							return await pollSearch(data.id);
 						}
