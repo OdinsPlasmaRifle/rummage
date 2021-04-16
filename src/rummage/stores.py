@@ -20,7 +20,7 @@ def luckshack(term):
 
     try:
         response = requests.get(url, timeout=5)
-    except requests.excetions.RequestException:
+    except requests.exceptions.RequestException:
         logger.exception(exc)
         return results, CONNECTION_ERROR
 
@@ -69,7 +69,7 @@ def dracoti(term):
 
     try:
         response = requests.post(url, data, timeout=5)
-    except requests.excetions.RequestException:
+    except requests.exceptions.RequestException:
         logger.exception(exc)
         return results, CONNECTION_ERROR
 
@@ -111,7 +111,7 @@ def topdecksa(term):
 
     try:
         response = requests.get(url, timeout=5)
-    except requests.excetions.RequestException:
+    except requests.exceptions.RequestException:
         logger.exception(exc)
         return results, CONNECTION_ERROR
 
@@ -148,7 +148,7 @@ def sadrobot(term):
 
     try:
         response = requests.get(url, timeout=5)
-    except requests.excetions.RequestException:
+    except requests.exceptions.RequestException:
         logger.exception(exc)
         return results, CONNECTION_ERROR
 
@@ -191,7 +191,7 @@ def hqgaming(term):
 
     try:
         response = requests.get(url, timeout=5)
-    except requests.excetions.RequestException:
+    except requests.exceptions.RequestException:
         logger.exception(exc)
         return results, CONNECTION_ERROR
 
@@ -227,7 +227,7 @@ def thewarren(term):
 
     try:
         response = requests.get(url, headers=headers, timeout=5)
-    except requests.excetions.RequestException:
+    except requests.exceptions.RequestException:
         logger.exception(exc)
         return results, CONNECTION_ERROR
 
@@ -264,7 +264,7 @@ def aifest(term):
 
     try:
         response = requests.get(url, timeout=5)
-    except requests.excetions.RequestException:
+    except requests.exceptions.RequestException:
         logger.exception(exc)
         return results, CONNECTION_ERROR
 
@@ -297,7 +297,7 @@ def battlewizards(term):
 
     try:
         response = requests.get(url, timeout=5)
-    except requests.excetions.RequestException:
+    except requests.exceptions.RequestException:
         logger.exception(exc)
         return results, CONNECTION_ERROR
 
@@ -332,7 +332,7 @@ def underworldconnections(term):
 
     try:
         response = requests.get(url, timeout=5)
-    except requests.excetions.RequestException:
+    except requests.exceptions.RequestException:
         logger.exception(exc)
         return results, CONNECTION_ERROR
 
