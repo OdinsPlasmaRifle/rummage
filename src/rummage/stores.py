@@ -16,7 +16,7 @@ RESPONSE_FORMAT_ERROR = "Unexpected response format from the store."
 def luckshack(term):
     error = None
     results = []
-    url = "https://luckshack.co.za/index.php?route=product/product/autocomplete&filter_name={}&version=3".format(term)
+    url = "https://luckshack.co.za/index.php?route=product/asearch&search={}".format(term)
 
     try:
         response = requests.get(url, timeout=5)
@@ -26,25 +26,21 @@ def luckshack(term):
     if response.status_code != 200:
         return results, RESPONSE_CODE_ERROR
 
-    try:
-        res = response.json()['json']
-        first = res[0]
-    except IndexError:
-        pass
-    except Exception as exc:
-        logger.exception(exc)
-        error = RESPONSE_FORMAT_ERROR
-    else:
-        for r in res:
-            url = r.pop("url", None)
-            name = r.pop("name", None)
-            image = r.pop("image", None)
-            results.append({
-                "url": url,
-                "name": name,
-                "image": image,
-                "metadata": r
-            })
+    soup = BeautifulSoup(response.content, 'html.parser')
+    products = soup.findAll("div", class_="product-thumb")
+
+    for product in products:
+        image = product.div.a.img
+        title_box = product.findAll("div", class_="caption")[0]
+        price = title_box.findAll('td')[1].h5.b
+
+        data = {
+            "url": title_box.h4.a.get("href"),
+            "name": title_box.h4.a.string.strip(),
+            "image": image.get("src"),
+            "price": price.string.strip(),
+        }
+        results.append(data)
 
     return results, error
 
@@ -86,11 +82,16 @@ def dracoti(term):
                 url = r.pop("url", None)
                 name = r.pop("title", None)
                 image = r.pop("image_url", None)
+
+                # Extract the price from the HTML value in `price`.
+                soup = BeautifulSoup(r["price"], 'html.parser')
+                price = soup.span.bdi
+
                 results.append({
                     "url": url,
                     "name": name,
                     "image": image,
-                    "metadata": r
+                    "price": price.text.strip()
                 })
 
     return results, error
@@ -128,11 +129,12 @@ def topdecksa(term):
             url = r.pop("url", None)
             name = r.pop("title", None)
             image = r.pop("image", None)
+            price = r.pop("price", None)
             results.append({
                 "url": f"https://store.topdecksa.co.za{url}",
                 "name": name,
                 "image": image,
-                "metadata": r
+                "price": price
             })
 
     return results, error
@@ -141,7 +143,7 @@ def topdecksa(term):
 def sadrobot(term):
     error = None
     results = []
-    url = "https://www.sadrobot.co.za/wp-admin/admin-ajax.php?action=flatsome_ajax_search_products&query={}".format(term)
+    url = "https://www.sadrobot.co.za/?product_cat=&s={}&post_type=product".format(term)
 
     try:
         response = requests.get(url, timeout=5)
@@ -151,25 +153,27 @@ def sadrobot(term):
     if response.status_code != 200:
         return results, RESPONSE_CODE_ERROR
 
-    try:
-        res = response.json()['suggestions']
-        first = res[0]
-    except IndexError:
-        pass
-    except Exception as exc:
-        logger.exception(exc)
-        error = RESPONSE_FORMAT_ERROR
-    else:
-        for r in res:
-            url = r.pop("url", None)
-            name = r.pop("value", None)
-            image = r.pop("img", None)
-            results.append({
-                "url": url,
-                "name": name,
-                "image": image,
-                "metadata": r
-            })
+    soup = BeautifulSoup(response.content, 'html.parser')
+    products = soup.findAll("div", class_="product")
+
+    for product in products:
+        # Check if out of stock and skip if out of stock.
+        # NOTE : It would be better if we could do this via the GET filters.
+        add_cart_button = product.find("div", class_="add-to-cart-button")
+        if add_cart_button.a.string.strip() != "Add to cart":
+            continue
+
+        image = product.find("div", class_="box-image").div.a.img
+        title_box = product.find("p", class_="product-title")
+        price = product.find("span", class_="price").span.bdi
+
+        data = {
+            "url": title_box.a.get("href"),
+            "name": title_box.a.string.strip(),
+            "image": image.get("data-src"),
+            "price": price.text.strip(),
+        }
+        results.append(data)
 
     return results, error
 
@@ -206,8 +210,7 @@ def hqgaming(term):
             if r["available"] == True:
                 url = r.pop("url", None)
                 results.append({
-                    "url": url,
-                    "metadata": r
+                    "url": url
                 })
 
     return results, error
@@ -244,8 +247,7 @@ def thewarren(term):
             results.append({
                 "url": url,
                 "name": name,
-                "image": "https://via.placeholder.com/150.jpg",
-                "metadata": r
+                "image": "https://via.placeholder.com/150.jpg"
             })
 
     return results, error
@@ -276,8 +278,7 @@ def aifest(term):
         for r in res:
             url = r.pop("product_link", None)
             results.append({
-                "url": url,
-                "metadata": r
+                "url": url
             })
 
     return results, error
@@ -286,7 +287,7 @@ def aifest(term):
 def battlewizards(term):
     error = None
     results = []
-    url = "http://www.battlewizards.co.za/search.php?search_query={}&section=product".format(term)
+    url = "http://www.battlewizards.co.za/search.php?mode=1&search_query_adv={}&brand=&searchsubs=ON&price_from=&price_to=&featured=&shipping=&category%5B%5D=18&category%5B%5D=24&section=product".format(term)
 
     try:
         response = requests.get(url, timeout=5)
@@ -306,11 +307,9 @@ def battlewizards(term):
 
         data = {
             "url": title_box[0].a.get("href"),
-            "name": title_box[0].a.string,
+            "name": title_box[0].a.string.strip(),
             "image": image.get("data-src"),
-            "metadata": {
-                "price": price_box[0].string
-            }
+            "price": price_box[0].string.strip()
         }
         results.append(data)
 
@@ -342,11 +341,9 @@ def underworldconnections(term):
 
         data = {
             "url": title_box[0].a.get("href"),
-            "name": title_box[0].a.string,
+            "name": title_box[0].a.string.strip(),
             "image": image.get("data-src"),
-            "metadata": {
-                "price": price_box[0].find(text=True, recursive=False)
-            }
+            "price": price_box[0].find(text=True, recursive=False)
         }
         results.append(data)
 

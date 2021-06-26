@@ -31,8 +31,8 @@ class SearchResultSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SearchResult
-        fields = ('store', 'url', 'name', 'image', 'metadata',)
-        read_only_fields = ('store', 'url', 'name', 'image', 'metadata',)
+        fields = ('store', 'url', 'name', 'image', 'price',)
+        read_only_fields = ('store', 'url', 'name', 'image', 'price',)
 
 
 class SearchTermSerializer(serializers.ModelSerializer):

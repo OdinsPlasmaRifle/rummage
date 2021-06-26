@@ -73,12 +73,12 @@ class SearchResult(DateModel):
     url = models.CharField(max_length=500)
     name = models.CharField(max_length=500, null=True)
     image = models.CharField(max_length=500, null=True)
-    metadata = models.JSONField(null=True, default=dict)
+    price = models.CharField(max_length=64, null=True)
     expires = models.DateTimeField()
     # Override created to support manually setting the field.
     created = models.DateTimeField(default=now, db_index=True)
 
-    MAX_CACHE_AGE = 600
+    MAX_CACHE_AGE = 1
 
     class Meta:
         ordering = ['created']
@@ -98,7 +98,7 @@ class SearchError(DateModel):
     # Override created to support manually setting the field.
     created = models.DateTimeField(default=now, db_index=True)
 
-    MAX_CACHE_AGE = 600
+    MAX_CACHE_AGE = 1
 
     class Meta:
         ordering = ['created']
@@ -239,7 +239,7 @@ class Search(DateModel):
                                     url=cachable_result.url,
                                     name=cachable_result.name,
                                     image=cachable_result.image,
-                                    metadata=cachable_result.metadata,
+                                    price=cachable_result.price,
                                     expires=no_cache_expires,
                                     created=cachable_result.created
                                 )

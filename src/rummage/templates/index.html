@@ -87,7 +87,7 @@
 		</section>
 
 		<script>
-			var url = "http://rummage.odinsplasmarifle.com/"
+			var url = "http://localhost:8000/"
 			var stores = {}
 			var searchInput = document.getElementById("search");
 			var resultsDiv = document.getElementById("results");
@@ -171,12 +171,15 @@
 					content_strong.innerHTML = item.name;
 					var content_small = document.createElement("small");
 					content_small.innerHTML = " @" + stores[item.store].name;
-					var content_span = document.createElement("span");
-					content_span.innerHTML = "<br>Text about the card";
+					var content_price = document.createElement("span");
+					// NOTE : Can we switch to this for everything.
+					content_price.innerHTML = `
+						<br><strong>price</strong>: ${item.price}
+					`;
 					content_a.appendChild(content_strong);
 					content_p.appendChild(content_a)
 					content_p.appendChild(content_small);
-					content_p.appendChild(content_span);
+					content_p.appendChild(content_price);
 					content.appendChild(content_p);
 					// Append the elements to each other.
 					media.appendChild(content);
