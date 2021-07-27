@@ -43,7 +43,7 @@ Add a `.env` file to the project root. Use the `.example.env` file as a template
 Next, spin up a docker container for the postgres database:
 
 ```shell
-docker-compose up -d postgres
+docker-compose --env-file .env up -d postgres
 ```
 
 Run the migrations on the new database:
@@ -84,7 +84,7 @@ Also, update the `.env` file to contain production appropriate values and remove
 To run the docker containers, enter the following commands:
 
 ```shell
-docker-compose up -d --no-deps --build
+docker-compose --env-file .env up -d --no-deps --build
 ```
 
 This will spin up all the docker containers required.
