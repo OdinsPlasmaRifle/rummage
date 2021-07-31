@@ -1,0 +1,19 @@
+services:
+  nginx:
+    restart: always
+
+  web:
+    restart: always
+
+  worker_general:
+    restart: always
+
+  scheduler:
+    env_file: $PWD/.env
+    restart: always
+
+  postgres:
+    restart: always
+
+  rabbitmq:
+    restart: always

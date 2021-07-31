@@ -5,7 +5,6 @@ services:
     image: nginx:latest
     ports:
       - "80:80"
-    restart: always
     volumes:
       - ./etc/nginx:/etc/nginx/conf.d
       - static_volume:/app/var/www/static:rw
@@ -17,7 +16,6 @@ services:
   web:
     build: .
     env_file: $PWD/.env
-    restart: always
     command: /bin/sh -c "gunicorn rummage.wsgi:application --config file:rummage/gunicorn.py"
     expose:
       - "8000"
@@ -32,7 +30,6 @@ services:
   worker_general:
     build: .
     env_file: $PWD/.env
-    restart: always
     command: /bin/sh -c "celery -A rummage.celery worker --loglevel=INFO --concurrency=1 -Q general-${CELERY_ID}"
     networks:
       - main
@@ -43,7 +40,6 @@ services:
   scheduler:
     build: .
     env_file: $PWD/.env
-    restart: always
     command: /bin/sh -c "celery -A rummage.celery worker --beat --loglevel=INFO --pidfile= --concurrency=1 -Q dummy-queue-${CELERY_ID}"
     networks:
       - main
@@ -57,9 +53,6 @@ services:
       POSTGRES_DB: '${POSTGRES_DB}'
       POSTGRES_USER: '${POSTGRES_USER}'
       POSTGRES_PASSWORD: '${POSTGRES_PASSWORD}'
-    ports:
-      - '${POSTGRES_PORT}:5432'
-    restart: always
     volumes:
       - postgres_volume:/var/lib/postgresql/data
     networks:
@@ -72,7 +65,6 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
-    restart: always
     networks:
       main:
         aliases:
