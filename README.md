@@ -40,10 +40,10 @@ pip install -r src/requirements.txt
 
 Add a `.env` file to the project root. Use the `.example.env` file as a template.
 
-Next, spin up a docker container for the postgres database:
+Next, spin up a docker container for the `postgres` database only:
 
 ```shell
-docker-compose --env-file .env up -d postgres
+docker-compose --env-file .env -f docker-compose.yml -f docker-compose.dev.yml up -d postgres
 ```
 
 Run the migrations on the new database:
@@ -77,17 +77,20 @@ The django server will be served on: http://localhost:8000
 
 This project can be run in production using docker.
 
-Ensure that you run docker as a non-root user who is part of the `docker` group.
+Ensure that you always run docker commands as a non-root user who is part of the `docker` group.
 
-Also, update the `.env` file to contain production appropriate values and remove the following variables: `SKIP_TASK_QUEUE` and `DEBUG`.
+Also, before beginning update the `.env` file to contain production appropriate values (including unique passwords). Also, remove the following values from the env file:
 
-To run the docker containers, enter the following commands:
+1. `SKIP_TASK_QUEUE`
+2. `DEBUG`.
+
+To build and run the docker containers, enter the following command:
 
 ```shell
-docker-compose --env-file .env up -d --no-deps --build
+docker-compose --env-file .env -f docker-compose.yml -f docker-compose.prod.yml up -d --no-deps --build
 ```
 
-This will spin up all the docker containers required.
+This will spin up all the full suie of docker containers. **Make sure that you are not using the dev docker-compose file**. The postgres database will be exposed on a public port if you use the dev configuration. The only thing preventing public access to it will be your postgres password and firewall (if configured).
 
 You can then migrate the database:
 
