@@ -287,7 +287,7 @@ def aifest(term):
 def battlewizards(term):
     error = None
     results = []
-    url = "http://www.battlewizards.co.za/search.php?mode=1&search_query_adv={}&brand=&searchsubs=ON&price_from=&price_to=&featured=&shipping=&category%5B%5D=18&category%5B%5D=24&section=product".format(term)
+    url = "https://www.battlewizards.co.za/search.php?mode=1&search_query_adv={}&brand=&searchsubs=ON&price_from=&price_to=&featured=&shipping=&category%5B%5D=18&category%5B%5D=24&section=product".format(term)
 
     try:
         response = requests.get(url, timeout=5)
@@ -346,5 +346,76 @@ def underworldconnections(term):
             "price": price_box[0].find(text=True, recursive=False)
         }
         results.append(data)
+
+    return results, error
+
+
+def d20battleground(term):
+    error = None
+    results = []
+    url = "https://d20battleground.co.za/search/suggest.json?q={}&resources[type]=product".format(term)
+
+    try:
+        response = requests.get(url, timeout=5)
+    except requests.exceptions.RequestException:
+        return results, CONNECTION_ERROR
+
+    if response.status_code != 200:
+        return results, RESPONSE_CODE_ERROR
+
+    try:
+        res = response.json()["resources"]["results"]["products"]
+        first = res[0]
+    except IndexError:
+        pass
+    except Exception as exc:
+        logger.exception(exc)
+        error = RESPONSE_FORMAT_ERROR
+    else:
+        for r in res:
+            if r["available"] == True:
+                url = r.pop("url", None)
+                name = r.pop("title", None)
+                image = r.pop("image", None)
+                price = r.pop("price", None)
+                results.append({
+                    "url": f"https://d20battleground.co.za{url}",
+                    "name": name,
+                    "image": image,
+                    "price": price
+                })
+
+    return results, error
+
+
+def thestonedragon(term):
+    error = None
+    results = []
+    url = " https://thestonedragon.co.za/wp-json/ysm/v1/search?id=1&query={}".format(term)
+
+    try:
+        response = requests.get(url, timeout=5)
+    except requests.exceptions.RequestException:
+        return results, CONNECTION_ERROR
+
+    if response.status_code != 200:
+        return results, RESPONSE_CODE_ERROR
+
+    try:
+        res = response.json()['suggestions']
+        first = res[0]
+    except IndexError:
+        pass
+    except Exception as exc:
+        logger.exception(exc)
+        error = RESPONSE_FORMAT_ERROR
+    else:
+        for r in res:
+            url = r.pop("url", None)
+            name = r.pop("value", None)
+            results.append({
+                "url": url,
+                "name": name
+            })
 
     return results, error

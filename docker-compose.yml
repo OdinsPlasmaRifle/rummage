@@ -48,7 +48,7 @@ services:
       - postgres
 
   postgres:
-    image: postgres:9.6
+    image: postgres:13.6
     environment:
       POSTGRES_DB: '${POSTGRES_DB}'
       POSTGRES_USER: '${POSTGRES_USER}'

@@ -81,15 +81,20 @@ class CreateSearchSerializer(SearchSerializer):
         )
         read_only_fields = ('id', 'status', 'retries', 'created', 'updated',)
 
-    def validate_stores(self, stores):
-        return Store.objects.filter(slug__in=stores, enabled=True)
+    def validate_stores(self, store_ids):
+        stores = Store.objects.filter(id__in=store_ids, enabled=True)
+
+        if len(stores) != len(store_ids):
+            raise serializers.ValidationError(_('Invalid stores.'))
+
+        return stores
 
     def create(self, validated_data):
         stores = validated_data.pop("stores", None)
         terms = validated_data.pop("terms", [])
 
         # Get default stores.
-        if stores is None:
+        if not stores:
             stores = Store.objects.filter(enabled=True)
 
         with transaction.atomic():

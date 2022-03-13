@@ -90,7 +90,7 @@
       "name": "Battle Wizards",
       "slug": "battlewizards",
       "enabled": true,
-      "website": "http://www.battlewizards.co.za",
+      "website": "https://www.battlewizards.co.za",
       "created": "2020-03-28T09:01:08.745Z",
       "updated": "2020-03-28T09:01:08.745Z"
     }
@@ -103,6 +103,30 @@
       "slug": "underworldconnections",
       "enabled": true,
       "website": "https://underworldconnections.com",
+      "created": "2020-03-28T09:01:08.745Z",
+      "updated": "2020-03-28T09:01:08.745Z"
+    }
+  },
+  {
+    "model": "rummage.store",
+    "pk": 10,
+    "fields": {
+      "name": "D20 Battleground",
+      "slug": "d20battleground",
+      "enabled": true,
+      "website": "https://d20battleground.co.za",
+      "created": "2020-03-28T09:01:08.745Z",
+      "updated": "2020-03-28T09:01:08.745Z"
+    }
+  },
+  {
+    "model": "rummage.store",
+    "pk": 11,
+    "fields": {
+      "name": "The Stone Dragon",
+      "slug": "thestonedragon",
+      "enabled": true,
+      "website": "https://thestonedragon.co.za",
       "created": "2020-03-28T09:01:08.745Z",
       "updated": "2020-03-28T09:01:08.745Z"
     }

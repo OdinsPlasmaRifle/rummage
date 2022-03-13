@@ -10,11 +10,12 @@ Product searcher for MTG stores in South Africa. The following stores are suppor
 - A.I. Fest
 - Battle Wizards
 - Underworld Connections
+- D20 Battleground
+- The Stone Dragon
 
 Previously supported:
 
 - HQ Gaming - The store is no longer operating.
-
 
 ## Issues
 
@@ -27,6 +28,9 @@ The following stores have very "vague" matching when finding results:
 
 - Battle Wizards
 
+The following stores have issues finding the correct prices to display for stock that is available:
+
+- Top Deck
 
 ## Development
 
@@ -71,7 +75,6 @@ python ./src/manage.py runserver
 ```
 
 The django server will be served on: http://localhost:8000
-
 
 ## Production
 
