@@ -72,7 +72,12 @@ class SearchResult(DateModel):
     )
     url = models.CharField(max_length=500)
     name = models.CharField(max_length=500, null=True)
-    image = models.CharField(max_length=500, null=True)
+    image = models.CharField(
+        max_length=500,
+        null=True,
+        blank=True,
+        default="https://via.placeholder.com/150.jpg"
+    )
     price = models.CharField(max_length=64, null=True)
     expires = models.DateTimeField()
     # Override created to support manually setting the field.

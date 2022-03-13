@@ -246,8 +246,7 @@ def thewarren(term):
             name = r.pop("name", None)
             results.append({
                 "url": url,
-                "name": name,
-                "image": "https://via.placeholder.com/150.jpg"
+                "name": name
             })
 
     return results, error
