@@ -316,6 +316,10 @@ def battlewizards(term):
 
 
 def underworldconnections(term):
+    """
+    DEPRECATED: This store is no longer operating.
+    """
+
     error = None
     results = []
     url = "https://underworldconnections.com/?s={}&shop_load=search&post_type=product&shop_filters_layout=header".format(term)
