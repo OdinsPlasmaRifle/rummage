@@ -9,13 +9,13 @@ Product searcher for MTG stores in South Africa. The following stores are suppor
 - The Warren
 - A.I. Fest
 - Battle Wizards
-- Underworld Connections
 - D20 Battleground
 - The Stone Dragon
 
 Previously supported:
 
 - HQ Gaming - The store is no longer operating.
+- Underworld Connections
 
 ## Issues
 
