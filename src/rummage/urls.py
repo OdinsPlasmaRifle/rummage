@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.views.generic import TemplateView
 from rest_framework import permissions
 from drf_spectacular.views import (
-    SpectacularJSONAPIView, SpectacularSwaggerView, SpectacularRedocView
+    SpectacularJSONAPIView, SpectacularSwaggerView
 )
 
 from . import views
@@ -63,11 +63,6 @@ The **Rummage API** is a product searcher for MTG stores in South Africa.
         r'^swagger/?$',
         SpectacularSwaggerView.as_view(url_name='schema'),
         name='swagger-ui'
-    ),
-    re_path(
-        r'^/?$',
-        SpectacularRedocView.as_view(url_name='schema'),
-        name='redoc-ui'
     ),
 
     # API
