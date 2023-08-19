@@ -12,8 +12,16 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 ALLOWED_HOSTS = ['*']
 
-CORS_ORIGIN_ALLOW_ALL = True
+ROOT_URLCONF = 'rummage.urls'
 
+WSGI_APPLICATION = 'rummage.wsgi.application'
+
+VERSION = '1.0.0'
+
+SITE_ID = 1
+
+# Installed apps
+# ------------------------------------------------------------------------------
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -24,10 +32,13 @@ INSTALLED_APPS = [
 
     'corsheaders',
     'rest_framework',
-    'drf_yasg',
+    'drf_spectacular',
+    'drf_spectacular_sidecar',
     'rummage',
 ]
 
+# Middleware
+# ------------------------------------------------------------------------------
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -38,8 +49,17 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'rummage.urls'
+# AutoField
+# ------------------------------------------------------------------------------
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
+# CORS headers
+# ------------------------------------------------------------------------------
+CORS_ALLOW_ALL_ORIGINS = True
+
+# Template files
+# ------------------------------------------------------------------------------
+# https://docs.djangoproject.com/en/dev/howto/static-files/
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -58,12 +78,9 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'rummage.wsgi.application'
-
-
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
-
+# ------------------------------------------------------------------------------
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -78,11 +95,9 @@ DATABASES = {
     }
 }
 
-DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
-
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
-
+# ------------------------------------------------------------------------------
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -98,10 +113,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
-
+# ------------------------------------------------------------------------------
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
@@ -112,10 +126,9 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
-
+# ------------------------------------------------------------------------------
 STATIC_URL = '/static/'
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'var/www/static')
@@ -124,9 +137,8 @@ MEDIA_URL = '/media/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'var/www/media')
 
-
 # REST FRAMEWORK ~ http://www.django-rest-framework.org/
-# ---------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
@@ -140,44 +152,49 @@ REST_FRAMEWORK = {
     'DEFAULT_THROTTLE_RATES': {
         'anon': '60/minute'
     },
+    'DEFAULT_VERSION': '1',
+    'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.NamespaceVersioning',
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 15
 }
 
+# Spectacular
+# ------------------------------------------------------------------------------
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Rummage API',
+    'DESCRIPTION': 'Rummage API',
+    'VERSION': '1',
 
-# DRF YASG ~ https://github.com/axnsan12/drf-yasg
-# ---------------------------------------------------------------------------------------------------------------------
-SWAGGER_SETTINGS = {
-    'USE_SESSION_AUTH': False,
-    'SECURITY_DEFINITIONS': {
-        'Bearer': {
-            'type': 'apiKey',
-            'name': 'Authorization',
-            'in': 'header'
-        }
+    # List of servers.
+    'SERVERS': [
+        {"url": os.environ.get(
+            'BASE_URL', "https://rummage.odinsplasmarifle.com"
+        )}
+    ],
+
+    # Swagger UI
+    'SWAGGER_UI_DIST': 'SIDECAR',
+    'SWAGGER_UI_FAVICON_HREF': 'SIDECAR',
+    'SWAGGER_UI_SETTINGS': {
+        'docExpansion': 'none',
+        'showExtensions': False,
+        'defaultModelRendering': "example",
+        'displayOperationId': True
     },
-    'DOC_EXPANSION': 'none',
-    'DEFAULT_MODEL_RENDERING': 'example'
+
+    # Redoc
+    'REDOC_DIST': 'SIDECAR',
+    'REDOC_UI_SETTINGS': {
+        'lazyRendering': True,
+        'nativeScrollbars': True,
+        'requiredPropsFirst': True,
+        'showExtensions': True
+    },
 }
-
-REDOC_SETTINGS = {
-    'LAZY_RENDERING': True,
-    'NATIVE_SCROLLBARS': True,
-    'REQUIRED_PROPS_FIRST': True
-}
-
-
-# Other
-# ---------------------------------------------------------------------------------------------------------------------
-
-VERSION = '1.0.0'
-
-SITE_ID = 1
-
 
 # Celery
-# ---------------------------------------------------------------------------------------------------------------------
-
+# ------------------------------------------------------------------------------
 if os.environ.get('SKIP_TASK_QUEUE') in ['True', 'true', True]:
     CELERY_TASK_ALWAYS_EAGER = True
     CELERY_TASK_EAGER_PROPAGATES = True
@@ -208,10 +225,8 @@ CELERY_BEAT_SCHEDULE = {
     }
 }
 
-
 # Logging
-# ----------------------------------------------------------------------------------------------------------------------
-
+# ------------------------------------------------------------------------------
 from django.utils.log import DEFAULT_LOGGING
 
 LOGGING = {

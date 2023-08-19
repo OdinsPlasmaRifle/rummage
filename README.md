@@ -38,7 +38,7 @@ Setup a Python virtual environment first. Then run the following commands from w
 
 Install the necessary python packages:
 
-```shell
+```sh
 pip install -r src/requirements.txt
 ```
 
@@ -46,31 +46,31 @@ Add a `.env` file to the project root. Use the `.example.env` file as a template
 
 Next, spin up a docker container for the `postgres` database only:
 
-```shell
+```sh
 docker-compose --env-file .env -f docker-compose.yml -f docker-compose.dev.yml up -d postgres
 ```
 
 Run the migrations on the new database:
 
-```shell
+```sh
 python ./src/manage.py migrate
 ```
 
 Load the store fixtures:
 
-```shell
+```sh
 python ./src/manage.py loaddata stores.json
 ```
 
 Collect the static files:
 
-```shell
+```sh
 python ./src/manage.py collectstatic
 ```
 
 Finally, run the django server for testing:
 
-```shell
+```sh
 python ./src/manage.py runserver
 ```
 
@@ -89,7 +89,7 @@ Also, before beginning update the `.env` file to contain production appropriate 
 
 To build and run the docker containers, enter the following command:
 
-```shell
+```sh
 docker-compose --env-file .env -f docker-compose.yml -f docker-compose.prod.yml up -d --no-deps --build
 ```
 
@@ -97,18 +97,18 @@ This will spin up all the full suie of docker containers. **Make sure that you a
 
 You can then migrate the database:
 
-```shell
+```sh
 docker exec rummage_web_1 /bin/sh -c "python manage.py migrate"
 ```
 
 Load the store fixtures:
 
-```shell
+```sh
 docker exec rummage_web_1 /bin/sh -c "python manage.py loaddata stores.json"
 ```
 
 Collect the static files:
 
-```shell
+```sh
 docker exec rummage_web_1 /bin/sh -c "python manage.py collectstatic --no-input"
 ```

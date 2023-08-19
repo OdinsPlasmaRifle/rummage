@@ -1,25 +1,38 @@
 from django.urls import include, path, re_path
 from django.contrib import admin
 from django.views.generic import TemplateView
-from drf_yasg.views import get_schema_view
-from drf_yasg import openapi
 from rest_framework import permissions
-
+from drf_spectacular.views import (
+    SpectacularJSONAPIView, SpectacularSwaggerView, SpectacularRedocView
+)
 
 from . import views
 
 
 admin.autodiscover()
 
-schema_view = get_schema_view(
-   openapi.Info(
-      title="Rummage",
-      default_version='v1',
-      description=""
-   ),
-   public=True,
-   permission_classes=(permissions.AllowAny,),
-)
+v1_api_urlpatterns = [
+    re_path(
+        r'^stores/?$', views.ListStoreView.as_view(), name='stores'
+    ),
+    re_path(
+        r'^stores/(?P<id>\w+)/?$', views.StoreView.as_view(), name='stores-view'
+    ),
+    re_path(
+        r'^searches/?$', views.CreateSearchView.as_view(), name='searches'
+    ),
+    re_path(
+        r'^searches/(?P<id>([a-zA-Z0-9\_\-]+))/?$',
+        views.SearchView.as_view(),
+        name='searches-view'
+    ),
+]
+
+namespaced_urlpatterns = [
+    re_path(
+        r'^1/', include((v1_api_urlpatterns, 'rummage'), namespace='1')
+    )
+]
 
 urlpatterns = [
     # Administration
@@ -27,31 +40,36 @@ urlpatterns = [
 
     # Index
     re_path(
-      r'^$',
-      TemplateView.as_view(template_name="index.html"),
-      name='index'
+      r'^$', TemplateView.as_view(template_name="index.html"), name='index'
     ),
 
-    # Swagger
+    # Documentation
     re_path(
-      r'^swagger(?P<format>\.json|\.yaml)$',
-      schema_view.without_ui(cache_timeout=None),
-      name='schema-json'
+        r'^schema.json$',
+        SpectacularJSONAPIView.as_view(
+            api_version='1',
+            urlconf=namespaced_urlpatterns,
+            custom_settings={
+                'TITLE': 'Rummage API',
+                'DESCRIPTION': """
+The **Rummage API** is a product searcher for MTG stores in South Africa.
+                    """,
+                'VERSION': '1',
+            }
+        ),
+        name='schema'
     ),
     re_path(
-      r'^swagger/$',
-      schema_view.with_ui('swagger', cache_timeout=None),
-      name='schema-swagger-ui'
+        r'^swagger/?$',
+        SpectacularSwaggerView.as_view(url_name='schema'),
+        name='swagger-ui'
     ),
     re_path(
-      r'^redoc/$',
-      schema_view.with_ui('redoc', cache_timeout=None),
-      name='schema-redoc'
+        r'^/?$',
+        SpectacularRedocView.as_view(url_name='schema'),
+        name='redoc-ui'
     ),
 
     # API
-    re_path(r'^stores/?$', views.ListStoreView.as_view(), name='stores'),
-    re_path(r'^stores/(?P<id>\w+)/?$', views.StoreView.as_view(), name='stores-view'),
-    re_path(r'^searches/?$', views.CreateSearchView.as_view(), name='searches'),
-    re_path(r'^searches/(?P<id>([a-zA-Z0-9\_\-]+))/?$', views.SearchView.as_view(), name='searches-view'),
+    re_path(r'^', include((namespaced_urlpatterns, 'rummage')))
 ]
