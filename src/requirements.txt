@@ -10,6 +10,6 @@ django-enumfields==2.1.1
 drf-spectacular[sidecar]==0.26.4
 gunicorn==21.2.0
 psycopg2-binary==2.9.7
-requests==2.31.0
+requests==2.32.0
 beautifulsoup4==4.12.2
 vine==5.0.0
